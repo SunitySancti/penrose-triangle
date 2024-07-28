@@ -6,12 +6,19 @@ import GlobalStyles from 'styles/global'
 
 import { UIStore } from 'store/ui'
 
+
 const uiStore = new UIStore();
 
 
 const App = () => (
     <ThemeProvider theme={ uiStore.theme }>
-        <PenroseTriangle/>
+        <PenroseTriangle
+            // cubesInSide
+            // gapRatio={ 1 }
+            // diameter
+            // rotate
+            // children
+        />
         <GlobalStyles/>
     </ThemeProvider>
 )

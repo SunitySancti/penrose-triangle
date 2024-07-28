@@ -40,12 +40,14 @@ import type { CubeViewProps } from 'interfaces/components'
 
 const CubeView = ({
     coords = [0,0],
+    size = 1,
+    isRotating = false,
 } : CubeViewProps = {}
 ) => {
     const meshRef = useRef<Mesh>(null);
 
     useFrame((_state, delta) => {
-        if(meshRef.current) {
+        if(isRotating && meshRef.current) {
             meshRef.current.rotation.x += delta;
             meshRef.current.rotation.y += delta;
         }
@@ -57,7 +59,7 @@ const CubeView = ({
             rotation={[ 45, 45, 0 ]}
             position={[...coords, 0]}
         >  
-            <boxGeometry args={[1, 1, 1]} />  
+            <boxGeometry args={[ size, size, size ]} />  
             <meshStandardMaterial color="lime" roughness={0.5} metalness={0.5}/>  
         </mesh>
     )

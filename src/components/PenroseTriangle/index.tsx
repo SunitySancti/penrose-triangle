@@ -1,15 +1,20 @@
 import PenroseTriangleView from './view'
-import { getCubesCenters } from 'util'
+import { useCubesData } from 'util/hooks'
+
+import { PenroseTriangleProps } from 'interfaces/components'
 
 
-const PenroseTriangle = (_props: any) => {
-    const groupedPoints = getCubesCenters({
-        size: 6,
-        cubesInLine: 4,
-    });
+const PenroseTriangle = ({
+	cubesInSide = 4,
+	gapRatio = 0.5,
+    diameter = 6,
+	// rotate = 0,
+	// children = null,
+}: PenroseTriangleProps ) => {
+    const { groupedPoints, cubeSize } = useCubesData({ cubesInSide, gapRatio, diameter });
     
     return (
-        <PenroseTriangleView {...{ groupedPoints }}/>
+        <PenroseTriangleView {...{ groupedPoints, cubeSize }}/>
     )
 };
 

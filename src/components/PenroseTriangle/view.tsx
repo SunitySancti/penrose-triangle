@@ -17,6 +17,7 @@ const Container = styled.div`
 
 const PenroseTriangleView = ({
     groupedPoints = [[]],
+    cubeSize = 1
 } : PenroseTriangleViewProps
 ) => {
     return (
@@ -26,9 +27,18 @@ const PenroseTriangleView = ({
                 <pointLight position={[5, 5, 5]} intensity={500} />
                 
                 { groupedPoints.map(line => line.map((vertex, idx) => (
-                    <Cube coords={[ vertex.x, vertex.y ]} key={idx}/>
+                    <Cube
+                        key={idx}
+                        coords={[ vertex.x, vertex.y ]}
+                        size={ cubeSize }
+                        isRotating
+                    />
                 )))}
-                <Cube coords={[ 0, -0.8 ]}/>
+                <Cube
+                    coords={[ 0, -0.8 ]}
+                    size={ cubeSize }
+                    isRotating
+                />
 
                 {/* <OrbitControls/> */}
             </Canvas>  
