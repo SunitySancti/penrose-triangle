@@ -1,7 +1,7 @@
 import { css } from 'styled-components'
 
 
-export const absoluteCenterize = () => css`
+export const translateCenter = () => css`
     position: absolute;
     left: 50%;
     top: 50%;

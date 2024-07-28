@@ -6,4 +6,4 @@ const Cube = (props: any) => {
     );
 };
 
-export default Cube;
+export default Cube

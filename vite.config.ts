@@ -10,6 +10,7 @@ export default defineConfig({
       interfaces: '/src/interfaces',
       styles: '/src/styles',
       store: '/src/store',
+      util: "/src/util",
     },  
   },  
 })

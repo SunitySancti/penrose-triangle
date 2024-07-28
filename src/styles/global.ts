@@ -14,9 +14,6 @@ export default createGlobalStyle`
         margin: 0;
         /* overflow-x: hidden; */
         position: relative;
-        perspective: 1000px;
-        perspective-origin: center;
-        transform-style: preserve-3d;
     }
 
     #root {

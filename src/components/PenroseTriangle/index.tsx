@@ -1,9 +1,16 @@
 import PenroseTriangleView from './view'
+import { getCubesCenters } from 'util'
 
-const PenroseTriangle = (props: any) => {
+
+const PenroseTriangle = (_props: any) => {
+    const groupedPoints = getCubesCenters({
+        size: 6,
+        cubesInLine: 4,
+    });
+    
     return (
-        <PenroseTriangleView {...props}/>
-    );
+        <PenroseTriangleView {...{ groupedPoints }}/>
+    )
 };
 
-export default PenroseTriangle;
+export default PenroseTriangle
