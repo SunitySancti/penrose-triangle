@@ -1,8 +1,6 @@
 import { Vector2 } from 'three'
 
 
-// Manipulations with vectors
-
 export const getPointsBetween = (
     startPoint: Vector2,
     endPoint: Vector2,
@@ -24,17 +22,20 @@ export const getSideLength = (start: Vector2, end: Vector2) => {
 }
 
 export const getCubeSize = (
-    triangleSideLength: number,  // calculated length of triangle side
-    gapRatio = 0.5,     // gap size expressed in cube lengths
+    triangleSideLength: number, // calculated length of triangle side
+    gapRatio = 0.5,             // gap size expressed in cube lengths
     cubesInSide = 4,
 ) => {
-    const n = Math.floor(cubesInSide);
+    const n = Math.max(3, Math.floor(cubesInSide));
     const g = gapRatio;
     const l = triangleSideLength;
+    const k = 1.229; // alignment coefficient
 
-    if(n > 2) {
-        return l / ((n - 1) * (g + 1))
-    } else {
-        return 1
-    }
+    return k * l / ((n - 1) * (g + 1))
 }
+
+export const degToRad = (degrees: number) => Math.PI * degrees / 180;
+
+export const degPerSecond = (degrees: number, delta: number) => (
+    degrees * delta * Math.PI / 180
+);

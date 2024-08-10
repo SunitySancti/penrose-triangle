@@ -1,49 +1,41 @@
-import styled from 'styled-components'
-import { Canvas } from '@react-three/fiber'
-// import { Vector2, DoubleSide, AxesHelper } from 'three'
-// import { TransformControls, OrbitControls } from '@react-three/drei'
+import { forwardRef } from 'react'
 
 import Cube from 'components/Cube'
+
+import { degToRad } from 'util'
+
+import type { Group } from 'three'
 import type { PenroseTriangleViewProps } from 'interfaces/components'
 
 
-const Container = styled.div`
-    background-color: ${ props => props.theme.palette.bg };
-    color: ${ props => props.theme.palette.textPrimary };
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-`
+const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
+    cubeCenters,
+    cubeSize,
+    diameter = 6,
+    rotation = 0,
+} , ref
+) => (
+    <group
+        ref={ ref }
+        rotation={[ 0, 0, -degToRad(rotation) ]}
+    >
+        <group position={[ 0, (0.75 * diameter / 6), 0 ]}>
 
-const PenroseTriangleView = ({
-    groupedPoints = [[]],
-    cubeSize = 1
-} : PenroseTriangleViewProps
-) => {
-    return (
-        <Container>
-            <Canvas style={{ height: '100vh', width: '100vw' }}>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[5, 5, 5]} intensity={500} />
-                
-                { groupedPoints.map(line => line.map((vertex, idx) => (
-                    <Cube
-                        key={idx}
-                        coords={[ vertex.x, vertex.y ]}
-                        size={ cubeSize }
-                        isRotating
-                    />
-                )))}
+            { cubeCenters.map((line, lineIdx) => line.map((point, idx) => (
                 <Cube
-                    coords={[ 0, -0.8 ]}
+                    key={ idx }
+                    coords={[ point.x, point.y ]}
                     size={ cubeSize }
-                    isRotating
+                    rotation={[ 0, 55, 45 ]}
+                    isLast={ (idx === line.length - 1)
+                            && (lineIdx === cubeCenters.length - 1)
+                    }
+                    // isRotating
                 />
+            )))}
 
-                {/* <OrbitControls/> */}
-            </Canvas>  
-        </Container>
-    );
-};
+        </group>
+    </group>
+));
 
 export default PenroseTriangleView

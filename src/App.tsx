@@ -13,10 +13,11 @@ const uiStore = new UIStore();
 const App = () => (
     <ThemeProvider theme={ uiStore.theme }>
         <PenroseTriangle
-            // cubesInSide
-            // gapRatio={ 1 }
-            // diameter
-            // rotate
+            cubesInSide={ 5 }
+            gapRatio={ 0.2 }
+            diameter={ 5 }
+            rotation={ 60 }
+            rotationSpeed={ 12 }
             // children
         />
         <GlobalStyles/>
