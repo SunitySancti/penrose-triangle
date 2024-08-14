@@ -1,79 +1,73 @@
 import { forwardRef } from 'react'
-import { Geometry,
-         Base,
-         Intersection } from '@react-three/csg'
 
-import { degToRad } from 'util'
+import { degToRad,
+         arraify } from 'util'
+import { cubeRotationY } from 'util/magicNumbers'
 
-import type { MutableRefObject } from 'react'
+import type { Group } from 'three'
 import type { CubeViewProps,
-              CubeForwardedRefs } from 'interfaces/components'
+              MaterialProps } from 'interfaces/components'
 
 
-const CubeView = forwardRef<CubeForwardedRefs, CubeViewProps>(({
+const Material = ({
+    type = 'standard',
+    color = 'coral',
+    isAbove = false
+} : MaterialProps
+) => {
+    switch(type) {
+        case 'standard':
+            return (
+                <meshStandardMaterial
+                    color={ color }
+                    roughness={0.5}
+                    metalness={0.5}
+                    depthWrite={ isAbove }
+                />
+            )
+        case 'normal':
+        default:
+            return (
+                <meshNormalMaterial
+                    depthWrite={ isAbove }
+                />
+            )
+    }
+}
+
+const CubeView = forwardRef<Group, CubeViewProps>(({
+    geometry,
+    order = 1,
     coords = [0, 0],
-    size = 1,
-    rotation: rotationDegrees = [0, 55, 45],
-    isRotating = false,
     zIndex = 0,
+    rotation: [x, y, z] = [0, cubeRotationY, 45],
     isLast = false,
     isAbove = false,
-    material = 'normal',
-    cubeSlicerGeometry
-} , ref
-) => {
-    const { groupRef, cubeRef } = (ref as MutableRefObject<CubeForwardedRefs | null>)?.current || {};
-    const [ x, y, z ] = rotationDegrees;
+    material = 'standard',
+    color = 'coral',
+},  ref
+) => (
+    <group
+        ref={ ref }
+        position={[ ...coords, zIndex ]}
+        rotation={ [degToRad(x), degToRad(y), degToRad(z) ] }
+    >
+        { arraify(geometry).map((geometry, idx) => (
 
-    const Material = () => {
-        const depthWrite = isRotating ? true : isAbove;
-        switch(material) {
-            case 'standard':
-                return (
-                    <meshStandardMaterial
-                        color="lime"
-                        roughness={0.5}
-                        metalness={0.5}
-                        depthWrite={ depthWrite }
-                    />
-                )
-            case 'normal':
-            default:
-                return <meshNormalMaterial depthWrite={ depthWrite }/>
-        }
-    }
-
-    return (
-        <>
-            <group
-                ref={ groupRef }
-                position={[ ...coords, zIndex ]}
-                rotation={ [degToRad(x), degToRad(y), degToRad(z) ] }
+            <mesh
+                key={ 'face-group_' + idx }
+                geometry={ geometry }
+                renderOrder={ (idx && isLast) ? 0 : order }
             >
-                
-                <mesh
-                    ref={ cubeRef }
-                    renderOrder={ isLast ? 0 : 1 }
-                >
-                    <boxGeometry args={[ size, size, size ]}/>
-                    <Material/>
-                </mesh>
+                <Material {...{
+                    type: material,
+                    color,
+                    isAbove
+                }}/>
+            </mesh>
 
-                { cubeSlicerGeometry &&
-
-                    <mesh renderOrder={ 1 }>
-                        <Material/>
-                        <Geometry>
-                            <Base>
-                                <boxGeometry args={[ size, size, size ]}/>
-                            </Base>
-                            <Intersection geometry={ cubeSlicerGeometry }/>
-                        </Geometry>
-                    </mesh>
-                }
-            </group>
-        </>
-    )
-})
+        ))}
+    </group>
+));
 
 export default CubeView

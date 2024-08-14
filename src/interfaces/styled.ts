@@ -1,6 +1,15 @@
+import { ReactNode } from "react"
+import { DefaultTheme } from "styled-components"
+
 export enum ThemeEnum  {
     light = "light",
     dark = "dark"
+}
+
+export interface Palette {
+    bg: string,
+    textPrimary: string,
+    transparent_gray_5: string,
 }
 
 export interface BaseTheme {
@@ -10,6 +19,7 @@ export interface BaseTheme {
     //     medium: string
     //     small: string
     // }
+    palette: Palette,
   
     sizes: {
         unit: number,
@@ -20,7 +30,7 @@ export interface BaseTheme {
     }
   
     // durations: {
-    //     ms300: number 
+    //     ms300: number    
     // }
   
     // order: {
@@ -29,14 +39,8 @@ export interface BaseTheme {
     // },
 }
 
-export interface ColorTheme extends BaseTheme {
-    palette: {
-        // primary: string,
-        // secondary: string,
-        // success: string,
-        // danger: string,
-        bg: string,
-        textPrimary: string,
-        // textSecondary: string,
-    }
+export interface ThemeProvidedProps {
+    theme: DefaultTheme,
+    children?: ReactNode,
+    className?: string,
 }

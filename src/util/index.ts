@@ -1,5 +1,7 @@
 import { Vector2 } from 'three'
 
+import { cubeSizeCoefficient } from 'util/magicNumbers'
+
 
 export const getPointsBetween = (
     startPoint: Vector2,
@@ -29,7 +31,7 @@ export const getCubeSize = (
     const n = Math.max(3, Math.floor(cubesInSide));
     const g = gapRatio;
     const l = triangleSideLength;
-    const k = 1.229; // alignment coefficient
+    const k = cubeSizeCoefficient;
 
     return k * l / ((n - 1) * (g + 1))
 }
@@ -39,3 +41,22 @@ export const degToRad = (degrees: number) => Math.PI * degrees / 180;
 export const degPerSecond = (degrees: number, delta: number) => (
     degrees * delta * Math.PI / 180
 );
+
+export const numberify = (value: string | number) => {
+    if(typeof value === 'string') {
+        value = Number(value)
+    }
+    if(Number.isNaN(value)) {
+        return undefined
+    } else {
+        return value
+    }
+}
+
+export const arraify = (value: any) => {
+    if(Array.isArray(value)) {
+        return value
+    } else {
+        return [ value ]
+    }
+}

@@ -3,6 +3,7 @@ import { forwardRef } from 'react'
 import Cube from 'components/Cube'
 
 import { degToRad } from 'util'
+import { triangleShiftY } from 'util/magicNumbers'
 
 import type { Group } from 'three'
 import type { PenroseTriangleViewProps } from 'interfaces/components'
@@ -11,28 +12,31 @@ import type { PenroseTriangleViewProps } from 'interfaces/components'
 const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
     cubeCenters,
     cubeSize,
-    diameter = 6,
+    diameter = 1,
     rotation = 0,
-} , ref
+},  ref
 ) => (
     <group
         ref={ ref }
         rotation={[ 0, 0, -degToRad(rotation) ]}
     >
-        <group position={[ 0, (0.75 * diameter / 6), 0 ]}>
+        <group position={[ 0, triangleShiftY * diameter, 0 ]}>
 
-            { cubeCenters.map((line, lineIdx) => line.map((point, idx) => (
-                <Cube
-                    key={ idx }
-                    coords={[ point.x, point.y ]}
-                    size={ cubeSize }
-                    rotation={[ 0, 55, 45 ]}
-                    isLast={ (idx === line.length - 1)
-                            && (lineIdx === cubeCenters.length - 1)
-                    }
-                    // isRotating
-                />
-            )))}
+            { cubeCenters.map((line, lineIdx) => line.map(({ x, y }, idx) => {
+                const totalLength = line.length * cubeCenters.length;
+                const idxInTotal = (lineIdx * line.length) + idx;
+                return (
+                    <Cube
+                        key={ 'cube_' + idxInTotal }
+                        coords={[ x, y ]}
+                        size={ cubeSize }
+                        isLast={ idxInTotal === totalLength - 1 }
+                        material='standard'
+                        order={ idxInTotal + 1 }
+                        // isRotating
+                    />
+                )
+            }))}
 
         </group>
     </group>

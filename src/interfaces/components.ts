@@ -1,8 +1,6 @@
-import { useCubeSlicer } from 'util/hooks'
-
-import type { RefObject, ReactNode } from 'react'
-import type { GroupedPoints } from 'interfaces/util'
-import type { Mesh, Group } from 'three'
+import type { ReactNode } from 'react'
+import type { GroupedPoints,
+              GeometryLike } from 'interfaces/util'
 
 
 export interface PenroseTriangleProps {
@@ -22,18 +20,21 @@ export interface PenroseTriangleViewProps {
 }
 
 export interface CubeViewProps {
-    coords?: [number, number],
+    order?: number,
     size?: number,
+    geometry?: GeometryLike,
+    coords?: [number, number],
     rotation?: [number, number, number],
-    zIndex?: number,
     isRotating?: boolean,
     isLast?: boolean,
     isAbove?: boolean,
     material?: 'standard' | 'normal',
-    cubeSlicerGeometry?: ReturnType<typeof useCubeSlicer>
+    color?: string,
+    zIndex?: number,
 }
 
-export interface CubeForwardedRefs {
-    groupRef: RefObject<Group>,
-    cubeRef: RefObject<Mesh>,
+export interface MaterialProps {
+    type?: 'standard' | 'normal',
+    color?: string,
+    isAbove?: boolean,
 }

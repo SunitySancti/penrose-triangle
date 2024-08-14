@@ -5,8 +5,8 @@ import { ThemeEnum } from 'interfaces/styled'
 import { darkTheme, lightTheme } from 'styles/theme'
 
 
-export class UIStore {
-    theme: DefaultTheme = lightTheme
+class UIStore {
+    theme: DefaultTheme = lightTheme;
     
     constructor() {
         makeAutoObservable(this)
@@ -21,3 +21,5 @@ export class UIStore {
         this.theme = this.isLightTheme ? darkTheme : lightTheme
     }
 }
+
+export const uiStoreInstance = new UIStore();

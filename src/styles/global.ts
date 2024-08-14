@@ -20,6 +20,8 @@ export default createGlobalStyle`
         width: 100vw;
         min-height: 100vh;
         /* background-color: $grayscale_20; */
+        background-image: url('/house-of-stairs.jpg');
+        background-position: center center;
     }
 
     ::-webkit-scrollbar {

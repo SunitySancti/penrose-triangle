@@ -2,27 +2,30 @@ import { useRef } from 'react'
 
 import CubeView from './view.tsx'
 
-import { useCubeSlicer,
+import { useCubeGeometry,
          useCubeRotation } from 'util/hooks'
 
-import type { Mesh, Group } from 'three'
+import type { Group } from 'three'
 
 
-const Cube = ({ isRotating, isLast, ...props }: any) => {
+const Cube = ({
+    size,
+    isLast,
+    isRotating,
+    ...props
+}: any
+) => {
     const groupRef = useRef<Group>(null);
-    const cubeRef = useRef<Mesh>(null);
-    const ref = useRef({ groupRef, cubeRef });
-
-    const cubeSlicerGeometry = useCubeSlicer(cubeRef, isLast);
+    const cubeSlicedGeometry = useCubeGeometry(size, true);
     useCubeRotation(groupRef, isRotating);
 
     return (
         <CubeView {...{
             ...props,
+            geometry: cubeSlicedGeometry,
             isRotating,
             isLast,
-            cubeSlicerGeometry,
-            ref,
+            ref: groupRef,
         }}/>
     );
 };
