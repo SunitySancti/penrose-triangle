@@ -9,22 +9,23 @@ import type { Group } from 'three'
 
 
 const Cube = ({
-    size,
     isLast,
+    size = 1,
     isRotating,
+    checkDepth,
     ...props
 }: any
 ) => {
     const groupRef = useRef<Group>(null);
-    const cubeSlicedGeometry = useCubeGeometry(size, true);
+    const cubeSlicedGeometry = useCubeGeometry(size, !isRotating && isLast);
     useCubeRotation(groupRef, isRotating);
 
     return (
         <CubeView {...{
             ...props,
             geometry: cubeSlicedGeometry,
-            isRotating,
             isLast,
+            checkDepth: checkDepth || isRotating,
             ref: groupRef,
         }}/>
     );

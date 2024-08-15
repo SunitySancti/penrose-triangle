@@ -12,7 +12,7 @@ import type { CubeViewProps,
 const Material = ({
     type = 'standard',
     color = 'coral',
-    isAbove = false
+    checkDepth = false
 } : MaterialProps
 ) => {
     switch(type) {
@@ -22,14 +22,14 @@ const Material = ({
                     color={ color }
                     roughness={0.5}
                     metalness={0.5}
-                    depthWrite={ isAbove }
+                    depthWrite={ checkDepth }
                 />
             )
         case 'normal':
         default:
             return (
                 <meshNormalMaterial
-                    depthWrite={ isAbove }
+                    depthWrite={ checkDepth }
                 />
             )
     }
@@ -42,9 +42,9 @@ const CubeView = forwardRef<Group, CubeViewProps>(({
     zIndex = 0,
     rotation: [x, y, z] = [0, cubeRotationY, 45],
     isLast = false,
-    isAbove = false,
+    checkDepth = false,
     material = 'standard',
-    color = 'coral',
+    color = 'gold',
 },  ref
 ) => (
     <group
@@ -62,7 +62,7 @@ const CubeView = forwardRef<Group, CubeViewProps>(({
                 <Material {...{
                     type: material,
                     color,
-                    isAbove
+                    checkDepth
                 }}/>
             </mesh>
 

@@ -28,11 +28,11 @@ const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
                 return (
                     <Cube
                         key={ 'cube_' + idxInTotal }
-                        coords={[ x, y ]}
-                        size={ cubeSize }
-                        isLast={ idxInTotal === totalLength - 1 }
-                        material='standard'
                         order={ idxInTotal + 1 }
+                        size={ cubeSize }
+                        coords={[ x, y ]}
+                        isLast={ idxInTotal === totalLength - 1 }
+                        // material='standard'
                         // isRotating
                     />
                 )

@@ -19,22 +19,28 @@ export interface PenroseTriangleViewProps {
     diameter?: number,
 }
 
-export interface CubeViewProps {
+export interface CubeCommonProps {
     order?: number,
-    size?: number,
-    geometry?: GeometryLike,
     coords?: [number, number],
+    zIndex?: number,
     rotation?: [number, number, number],
-    isRotating?: boolean,
     isLast?: boolean,
-    isAbove?: boolean,
+    checkDepth?: boolean,
     material?: 'standard' | 'normal',
     color?: string,
-    zIndex?: number,
+}
+
+export interface CubeModelProps extends CubeCommonProps {
+    size?: number
+    isRotating?: boolean,
+}
+
+export interface CubeViewProps extends CubeCommonProps {
+    geometry?: GeometryLike,
 }
 
 export interface MaterialProps {
     type?: 'standard' | 'normal',
     color?: string,
-    isAbove?: boolean,
+    checkDepth?: boolean,
 }
