@@ -51,65 +51,35 @@ export const useCubesData = ({
     return { cubeCenters, cubeSize }
 }
 
-export const useCubeGeometry = (size: number, shouldSlice: boolean) => {
+export const useCubeGeometry = (size: number, shouldSlice = false) => {
     return useMemo(() => {
         const boxGeometry = new THREE.BoxGeometry(size, size, size);
 
         if(shouldSlice) {
-            const positions = boxGeometry.attributes.position.array;
-            const normals = boxGeometry.attributes.normal.array;
-    
             const indices = [...(boxGeometry.index?.array || [])];
-            const triangles: number[][] = [[]];
+            const triangles: number[][] = [];
     
             while(indices?.length) {
-                const vert = indices.shift()
-                const lastTriangle = triangles[triangles.length - 1];
-                if(vert === undefined) {
-                    break
-                }
-                if(lastTriangle.length < 3) {
-                    lastTriangle.push(vert)
-                } else {
-                    triangles.push([ vert ])
-                }
+                const triangle = indices.splice(0,3);
+                triangles.push(triangle)
             }
-    
-            const sliceMeshTriangles = [
-                // 0,
-                // 1,
-                // 2,
-                3,
-                // 4,
-                // 5,
-                // 6,
-                // 7,
-                8,
-                9,
-                // 10,
-                // 11,
-            ];
-            const mainMeshTriangles = triangles.filter((_triangle, idx) => !sliceMeshTriangles.includes(idx));
+            // here define indices of triangles of mesh should be removed into slice:
+            const sliceMeshTrianglesIndices = [ 3, 8, 9 ];
+            
+            const mainMeshTriangles = triangles.filter((_triangle, idx) => !sliceMeshTrianglesIndices.includes(idx));
     
             const sliceMeshIndices: number[] = [];
             const mainMeshIndices: number[] = [];
     
-            sliceMeshTriangles.forEach(idx => {
+            sliceMeshTrianglesIndices.forEach(idx => {
                 sliceMeshIndices.push(...triangles[idx])
             });
             mainMeshTriangles.forEach(triangle => {
                 mainMeshIndices.push(...triangle)
             });
     
-            const slice = new THREE.BufferGeometry();  
-            slice.setAttribute('position', new THREE.BufferAttribute(positions, 3));  
-            slice.setAttribute('normal', new THREE.BufferAttribute(normals, 3));  
-            slice.setIndex(sliceMeshIndices); 
-    
-            const main = new THREE.BufferGeometry();  
-            main.setAttribute('position', new THREE.BufferAttribute(positions, 3));  
-            main.setAttribute('normal', new THREE.BufferAttribute(normals, 3));  
-            main.setIndex(mainMeshIndices);
+            const slice = boxGeometry.clone().setIndex(sliceMeshIndices);
+            const main = boxGeometry.clone().setIndex(mainMeshIndices);
     
             return [slice, main]
         } else {
@@ -167,7 +137,7 @@ export const useTriangleRotation = (
 
 export const useCubeRotation = (
     ref: RefObject<Group>,
-    isRotating: boolean,
+    isRotating = false,
 ) => {
     useFrame((_state, delta) => {
         const { current } = ref || {};
