@@ -6,6 +6,7 @@ import { useCubeGeometry,
          useCubeRotation } from 'util/hooks'
 
 import type { Group } from 'three'
+import type { CubeModelProps } from 'interfaces/components'
 
 
 const Cube = ({
@@ -14,7 +15,7 @@ const Cube = ({
     isRotating,
     checkDepth,
     ...props
-}: any
+}: CubeModelProps
 ) => {
     const groupRef = useRef<Group>(null);
     const cubeSlicedGeometry = useCubeGeometry(size, !isRotating && isLast);
