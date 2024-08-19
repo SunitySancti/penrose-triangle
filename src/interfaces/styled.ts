@@ -11,32 +11,30 @@ export interface Palette {
     textPrimary: string,
     transparent_gray_5: string,
 }
+ 
 
 export interface BaseTheme {
-    // media: {
-    //     extraLarge: string
-    //     large: string
-    //     medium: string
-    //     small: string
-    // }
     palette: Palette,
   
     sizes: {
         unit: number,
+        borderRadius: number,
+        buttonSize: number,
+        smallMargin: number,
+        largeMargin: number,
         // header: { height: number }
         // container: { width: number }
         // footer: { height: number }
         // modal: { width: number }
+    },
+
+    materials: {
+        [cssPropsGroup: string]: object
     }
   
-    // durations: {
-    //     ms300: number    
-    // }
-  
-    // order: {
-    //     header: number
-    //     modal: number
-    // },
+    durations: {
+        resizeTransition: number    
+    }
 }
 
 export interface ThemeProvidedProps {

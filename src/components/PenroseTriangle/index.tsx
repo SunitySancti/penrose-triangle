@@ -1,13 +1,14 @@
 import { useRef } from 'react'
 import { observer } from "mobx-react-lite"
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
-import styled from 'styled-components'
+import { OrthographicCamera } from '@react-three/drei'
 import * as THREE from 'three'
 
 import PenroseTriangleView from './view'
 import { useCubesData,
+         useElementSizes,
          useTriangleRotation } from 'util/hooks'
+import { zoomCoefficient } from 'util/magicNumbers'
 import { useTriangleConfig } from 'store/triangleConfig'
 
 import { PenroseTriangleProps } from 'interfaces/components'
@@ -19,11 +20,13 @@ const PenroseTriangle = ({
     diameter = 1,
     rotation = 0,
     rotationSpeed = 12,
+    isRotating = false,
+    isInverted = false
 	// children = null,
 }: PenroseTriangleProps ) => {
-    const { cubeCenters, cubeSize } = useCubesData({ cubesInSide, gapRatio, diameter });
+    const { cubeCenters, cubeSize } = useCubesData({ cubesInSide, gapRatio, diameter, isInverted });
     const rotationCenterRef = useRef<THREE.Group>(null);
-    useTriangleRotation(rotationCenterRef, rotationSpeed);
+    useTriangleRotation(rotationSpeed, isRotating);
     
     return (
         <PenroseTriangleView {...{
@@ -31,6 +34,7 @@ const PenroseTriangle = ({
             cubeSize,
             rotation,
             diameter,
+            isInverted,
             ref: rotationCenterRef
          }}/>
     )
@@ -38,28 +42,27 @@ const PenroseTriangle = ({
 
 // SCENE CONFIG //
 
-const Container = styled.div`
-    color: ${ props => props.theme.palette.textPrimary };
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-`
-
-const Scene = observer((_props: PenroseTriangleProps) => {
+const Scene = observer(({ parent }: PenroseTriangleProps) => {
     const { cubesInSide,
             gapRatio,
             diameter,
             rotation,
-            rotationSpeed } = useTriangleConfig();
+            rotationSpeed,
+            isRotating,
+            isInverted } = useTriangleConfig();
 
+    const { width, height } = useElementSizes(parent);
+    const limiter = Math.min(width, height);
 
     return (
-        <Container>
-            <Canvas
-                orthographic
-                camera={{ zoom: 500, position: [0, 0, 100] }}
-                style={{ height: '100%', width: '100%' }}
-            >
+            <Canvas style={{ height: '100%', width: '100%' }}>
+
+                <OrthographicCamera  
+                    makeDefault  
+                    zoom={ limiter * zoomCoefficient }  
+                    position={[0, 0, 100]}  
+                />  
+
                 <ambientLight intensity={0.5} />
                 <pointLight position={[5, 5, 5]} intensity={500} />
 
@@ -68,12 +71,12 @@ const Scene = observer((_props: PenroseTriangleProps) => {
                     gapRatio,
                     diameter,
                     rotation,
-                    rotationSpeed
+                    rotationSpeed,
+                    isRotating,
+                    isInverted,
                 }}/>
-
-                <OrbitControls/>
+                
             </Canvas>
-        </Container>
     )
 })
 

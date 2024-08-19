@@ -14,6 +14,7 @@ const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
     cubeSize,
     diameter = 1,
     rotation = 0,
+    isInverted = false
 },  ref
 ) => (
     <group
@@ -32,6 +33,7 @@ const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
                         size={ cubeSize }
                         coords={[ x, y ]}
                         isLast={ idxInTotal === totalLength - 1 }
+                        isInverted={ isInverted }
                         // material='standard'
                         // isRotating
                     />

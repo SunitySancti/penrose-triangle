@@ -2,7 +2,6 @@ import { forwardRef } from 'react'
 
 import { degToRad,
          arraify } from 'util'
-import { cubeRotationY } from 'util/magicNumbers'
 
 import type { Group } from 'three'
 import type { CubeViewProps,
@@ -11,7 +10,7 @@ import type { CubeViewProps,
 
 const Material = ({
     type = 'standard',
-    color = 'coral',
+    color = 'gold',
     checkDepth = false
 } : MaterialProps
 ) => {
@@ -20,8 +19,8 @@ const Material = ({
             return (
                 <meshStandardMaterial
                     color={ color }
-                    roughness={0.5}
-                    metalness={0.5}
+                    roughness={ 1 }
+                    metalness={ 2 }
                     depthWrite={ checkDepth }
                 />
             )
@@ -40,11 +39,11 @@ const CubeView = forwardRef<Group, CubeViewProps>(({
     order = 1,
     coords = [0, 0],
     zIndex = 0,
-    rotation: [x, y, z] = [0, cubeRotationY, 45],
+    rotation: [x, y, z] = [0, 0, 0],
     isLast = false,
-    checkDepth = false,
-    material = 'standard',
-    color = 'gold',
+    checkDepth,
+    material,
+    color,
 },  ref
 ) => (
     <group

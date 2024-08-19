@@ -12,31 +12,20 @@ export default createGlobalStyle`
 
     body {
         margin: 0;
-        /* overflow-x: hidden; */
-        position: relative;
-    }
-
-    #root {
-        width: 100vw;
-        min-height: 100vh;
-        /* background-color: $grayscale_20; */
-        background-image: url('/house-of-stairs.jpg');
-        background-position: center center;
+        overflow: hidden;
     }
 
     ::-webkit-scrollbar {
         position: absolute;
         right: 0;
-        /* background-color: $grayscale_20; */
     }
     ::-webkit-scrollbar-thumb {
         position: absolute;
         background-color: white;
         border-radius: 10px;
-        /* border: solid 5px $grayscale_20; */
         transition: all 0.3s ease-in-out;
+        
         &:hover {
-            /* border: solid 4px $grayscale_20; */
             background-color: white;
         }
     }

@@ -1,15 +1,14 @@
 import { useMemo,
          useState,
-         useEffect, 
-         useCallback } from 'react'
+         useEffect } from 'react'
 import { Vector2 } from 'three'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
 
 import { getPointsBetween,
          getCubeSize,
-         getSideLength,
-         degPerSecond } from 'util'
+         getSideLength } from 'util'
+import { useTriangleConfig } from 'store/triangleConfig'
 
 import type { RefObject } from 'react'
 import type { Group } from 'three'
@@ -21,6 +20,7 @@ export const useCubesData = ({
     cubesInSide,
     gapRatio,       // gap size expressed in cube lengths
     diameter,       // triangle circumcircle's diameter
+    isInverted
 } : CubesDataParams
 ) => {
     const halfSideLength = diameter * Math.sqrt(3) / 4;
@@ -32,18 +32,22 @@ export const useCubesData = ({
         C: new Vector2(halfSideLength, -halfHeight),
     }
     const { A, B, C } = vertices;
-    
-    const betweenAB = getPointsBetween(A, B, cubesInSide - 1);
-    const betweenBC = getPointsBetween(B, C, cubesInSide - 1);
-    const betweenCA = getPointsBetween(C, A, cubesInSide - 1);
+    const n = cubesInSide - 1;
 
-    const cubeCenters = useMemo(() => [
-        [ A, ...betweenAB ],
-        [ B, ...betweenBC ],
-        [ C, ...betweenCA ],
+    const cubeCenters = useMemo(() => isInverted
+        ? [
+            [ A, ...getPointsBetween(A, C, n) ],
+            [ C, ...getPointsBetween(C, B, n) ],
+            [ B, ...getPointsBetween(B, A, n) ],
+          ]
+        : [
+            [ A, ...getPointsBetween(A, B, n) ],
+            [ B, ...getPointsBetween(B, C, n) ],
+            [ C, ...getPointsBetween(C, A, n) ],
     ],[ cubesInSide,
         gapRatio,
-        diameter
+        diameter,
+        isInverted
     ]);
 
     const cubeSize = getCubeSize(getSideLength(A, B), gapRatio, cubesInSide);
@@ -51,7 +55,7 @@ export const useCubesData = ({
     return { cubeCenters, cubeSize }
 }
 
-export const useCubeGeometry = (size: number, shouldSlice = false) => {
+export const useCubeGeometry = (size: number, shouldSlice = false, isInverted = false) => {
     return useMemo(() => {
         const boxGeometry = new THREE.BoxGeometry(size, size, size);
 
@@ -64,7 +68,9 @@ export const useCubeGeometry = (size: number, shouldSlice = false) => {
                 triangles.push(triangle)
             }
             // here define indices of triangles of mesh should be removed into slice:
-            const sliceMeshTrianglesIndices = [ 3, 8, 9 ];
+            const sliceMeshTrianglesIndices = isInverted
+                ? [ 6, 8, 9 ]
+                : [ 3, 8, 9 ];
             
             const mainMeshTriangles = triangles.filter((_triangle, idx) => !sliceMeshTrianglesIndices.includes(idx));
     
@@ -85,52 +91,17 @@ export const useCubeGeometry = (size: number, shouldSlice = false) => {
         } else {
             return boxGeometry
         }
-    },[ size, shouldSlice ]);
-}
-
-export const useElementSizes = (ref?: RefObject<HTMLElement> | undefined) => {
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-
-    const setWindowSizes = useCallback(() => {
-        setWidth(window.innerWidth);
-        setHeight(window.innerHeight)
-    },[])
-
-    useEffect(() => {
-        if(ref) {
-            const { current } = ref;
-            if(current) {
-                const resizeObserver = new ResizeObserver(() => {
-                    setWidth(current.offsetWidth);
-                    setHeight(window.innerHeight)
-                });
-                resizeObserver.observe(current);
-
-                return () => {
-                    resizeObserver.disconnect();
-                }
-            } else {
-                window.addEventListener('resize', () => setWindowSizes);
-
-                return () => {
-                    window.removeEventListener('resize', () => setWindowSizes)
-                }
-            }
-        }
-        
-    },[ ref, ref?.current ]);
-
-    return { width, height }
+    },[ size, shouldSlice, isInverted ]);
 }
 
 export const useTriangleRotation = (
-    ref: RefObject<Group>,
     degreesPerSecond: number,
+    isRotating = false
 ) => {
+    const { rotate } = useTriangleConfig();
     useFrame((_state, delta) => {
-        if(ref.current) {
-            ref.current.rotation.z -= degPerSecond(degreesPerSecond, delta);
+        if(isRotating) {
+            rotate(degreesPerSecond * delta)
         }
     });
 }
@@ -147,3 +118,50 @@ export const useCubeRotation = (
         }
     });
 }
+
+export const useElementSizes = (ref?: RefObject<HTMLElement> | undefined) => {
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+    const [scrollWidth, setScrollWidth] = useState(0);
+    const [scrollHeight, setScrollHeight] = useState(0);
+
+    useEffect(() => {
+        if(ref) {
+            const { current } = ref;
+            if(current) {
+                const resizeObserver = new ResizeObserver(() => {
+                    setWidth(current.offsetWidth);
+                    setHeight(current.offsetHeight);
+                    setScrollWidth(current.scrollWidth);
+                    setScrollHeight(current.scrollHeight);
+                });
+                resizeObserver.observe(current);
+
+                return () => {
+                    resizeObserver.disconnect();
+                }
+            } 
+        } else {
+            const setWindowSizes = () => {
+                setWidth(window.innerWidth);
+                setHeight(window.innerHeight);
+                setScrollWidth(window.innerWidth);
+                setScrollHeight(window.innerHeight);
+            }
+            setWindowSizes();
+            window.addEventListener('resize', setWindowSizes);
+
+            return () => {
+                window.removeEventListener('resize', setWindowSizes)
+            }
+        }
+        
+    },[ ref, ref?.current ]);
+
+    return { width, height, scrollWidth, scrollHeight }
+}
+
+export const useResponsiveBackground = () => {
+    const { width, height } = useElementSizes();
+    return width >= height
+} 

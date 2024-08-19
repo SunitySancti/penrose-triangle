@@ -11,8 +11,10 @@ class TriangleConfigStore {
     cubesInSide = 5;
     gapRatio = 0.2;
     diameter = 1;
-    rotation = 0;
+    rotation = 60;
     rotationSpeed = 12;
+    isRotating = true;
+    isInverted = false;
     
     constructor() {
         makeAutoObservable(this);
@@ -25,36 +27,60 @@ class TriangleConfigStore {
         }
     }
 
-    setGapRatio(value: NumberLike) {
+    setGapRatio = (value: NumberLike) => {
         const num = numberify(value);
-        if(num) {
+        if(num !== undefined) {
             this.gapRatio = num
         }
     }
 
-    setDiameter(value: NumberLike) {
+    setDiameter = (value: NumberLike) => {
         const num = numberify(value);
         if(num) {
             this.diameter = num
         }
     }
 
-    setRotation(value: NumberLike) {
+    setRotation = (value: NumberLike) => {
         const num = numberify(value);
         if(num) {
             this.rotation = num
         }
     }
 
-    setRotationSpeed(value: NumberLike) {
+    rotate = (value: NumberLike) => {
+        const num = numberify(value);
+        if(num) {
+            let newValue = Math.round((this.rotation + num) * 100) / 100
+            
+            if(newValue > 360) {
+                this.rotation = newValue - 360
+            } else if(newValue < 0) {
+                this.rotation = newValue + 360
+            } else {
+                this.rotation = newValue
+            }
+            
+        }
+    }
+
+    setRotationSpeed = (value: NumberLike) => {
         const num = numberify(value);
         if(num) {
             this.rotationSpeed = num
         }
     }
 
-    toggleRotationDirection() {
+    toggleAutoRotation = () => {
+        this.isRotating = !this.isRotating
+    }
+
+    toggleRotationDirection = () => {
         this.rotationSpeed = -this.rotationSpeed
+    }
+
+    toggleGeometryInvertion = () => {
+        this.isInverted = !this.isInverted
     }
 }
 

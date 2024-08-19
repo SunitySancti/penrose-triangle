@@ -12,6 +12,7 @@ export interface CubesDataParams {
     cubesInSide: number,
     gapRatio: number,
     diameter: number,
+    isInverted: boolean
 }
 
 export type ArrayElement<ArrType> = ArrType extends readonly (infer ElementType)[]
