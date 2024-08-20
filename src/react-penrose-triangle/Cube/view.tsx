@@ -1,11 +1,11 @@
 import { forwardRef } from 'react'
 
 import { degToRad,
-         arraify } from 'util'
+         arraify } from '../util'
 
 import type { Group } from 'three'
 import type { CubeViewProps,
-              MaterialProps } from 'interfaces/components'
+              MaterialProps } from '../types'
 
 
 const Material = ({

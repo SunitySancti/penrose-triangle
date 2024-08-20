@@ -1,26 +1,20 @@
-import { forwardRef } from 'react'
+import Cube from '../Cube'
 
-import Cube from 'components/Cube'
+import { degToRad } from '../util'
+import { triangleShiftY } from '../util/magicNumbers'
 
-import { degToRad } from 'util'
-import { triangleShiftY } from 'util/magicNumbers'
-
-import type { Group } from 'three'
-import type { PenroseTriangleViewProps } from 'interfaces/components'
+import type { PenroseTriangleViewProps } from '../types'
 
 
-const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
+const PenroseTriangleView = ({
     cubeCenters,
     cubeSize,
     diameter = 1,
     rotation = 0,
     isInverted = false
-},  ref
+} : PenroseTriangleViewProps
 ) => (
-    <group
-        ref={ ref }
-        rotation={[ 0, 0, -degToRad(rotation) ]}
-    >
+    <group rotation={[ 0, 0, -degToRad(rotation) ]}>
         <group position={[ 0, triangleShiftY * diameter, 0 ]}>
 
             { cubeCenters.map((line, lineIdx) => line.map(({ x, y }, idx) => {
@@ -42,6 +36,6 @@ const PenroseTriangleView = forwardRef<Group, PenroseTriangleViewProps>(({
 
         </group>
     </group>
-));
+);
 
 export default PenroseTriangleView

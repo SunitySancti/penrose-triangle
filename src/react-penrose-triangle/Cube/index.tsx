@@ -3,11 +3,11 @@ import { useRef } from 'react'
 import CubeView from './view.tsx'
 
 import { useCubeGeometry,
-         useCubeRotation } from 'util/hooks'
-import { cubeRotationY } from 'util/magicNumbers'
+         useCubeRotation } from '../util/hooks'
+import { cubeRotationY } from '../util/magicNumbers'
 
 import type { Group } from 'three'
-import type { CubeModelProps } from 'interfaces/components'
+import type { CubeModelProps } from '../types'
 
 
 const Cube = ({

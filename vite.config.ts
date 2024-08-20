@@ -11,6 +11,7 @@ export default defineConfig({
       styles: '/src/styles',
       store: '/src/store',
       util: "/src/util",
+      ['react-penrose-triangle']: '/src/react-penrose-triangle'
     },  
   },  
 })

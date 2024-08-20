@@ -16,7 +16,7 @@ import Icon from 'components/atoms/Icon'
 import ExpandableCard from 'components/atoms/ExpandableCard'
 import TriangleRotationController from 'components/TriangleRotationController'
 
-import { useTriangleConfig } from 'store/triangleConfig'
+import type { ConfigMenuProps } from 'interfaces/components'
 
 
 const transitionLength = 0.6; 
@@ -51,23 +51,21 @@ const StyledListItem = styled(ListItem)({
     flexGrow: 0
 });
 
-const ConfigMenuView = observer(() => {
-    const {
-        cubesInSide,
-        setCubesInSide,
-        gapRatio,
-        setGapRatio,
-        diameter,
-        setDiameter,
-        isRotating,
-        toggleAutoRotation,
-        isInverted,
-        toggleGeometryInvertion,
-        rotation,
-        setRotation,
-        rotationSpeed,
-        setRotationSpeed,
-    } = useTriangleConfig();
+const ConfigMenuView = observer(({ config, controllers }: ConfigMenuProps) => {
+    const { setCubesInSide,
+            setGapRatio,
+            setDiameter,
+            toggleAutoRotation,
+            toggleGeometryInvertion,
+            setRotation,
+            setRotationSpeed } = controllers;
+    const { cubesInSide,
+            gapRatio,
+            diameter,
+            isRotating,
+            isInverted,
+            rotation,
+            rotationSpeed } = config;
 
     const handleCubesChange = useCallback((_e: any, value: number | null) => {
         setCubesInSide((value || 0) + 4)

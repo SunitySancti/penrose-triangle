@@ -1,18 +1,17 @@
 import styled,
        { ThemeProvider } from 'styled-components'
 import { Box } from '@mui/material'
+import { PenroseTriangle,
+         usePenroseTriangle } from 'react-penrose-triangle'
 
-import PenroseTriangle from 'components/PenroseTriangle'
 import ConfigMenu from 'components/ConfigMenu'
 import GlobalStyles from 'styles/global'
-// import { lightTheme } from 'styles/theme'
 
 import { useResponsiveBackground } from 'util/hooks'
 
 import { uiStoreInstance } from 'store/ui'
-import { TriangleConfigContext,
-         triangleConfigStoreInstance } from 'store/triangleConfig'
-import { useRef } from 'react'
+import { observer } from 'mobx-react-lite'
+
 
 
 const Container = styled(Box)(({ theme }) => ({
@@ -43,25 +42,35 @@ const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape })
         backgroundRepeat: 'no-repeat',
         transform: $isLandscape ? undefined : 'rotate(270deg)',
     }
-}))
+}));
 
-const App = () => {
+const defaultConfig = Object.freeze({
+    cubesInSide: 4,
+    gapRatio: 0.5,
+    diameter: 1.1,
+    rotation: 60,
+    rotationSpeed: 30,
+    isRotating: true,
+    isInverted: true
+});
+
+const App = observer(() => {
     const isLandscape = useResponsiveBackground();
-    const containerRef = useRef(null);
+    const { config, controllers, parentRef } = usePenroseTriangle(defaultConfig)
 
     return (
         <ThemeProvider theme={ uiStoreInstance.theme }>
-            <TriangleConfigContext.Provider value={ triangleConfigStoreInstance }>
-                <Background $isLandscape={ isLandscape }>
-                    <Container ref={ containerRef }>
-                        <PenroseTriangle parent={ containerRef }/>
-                    </Container>
-                    <ConfigMenu/>
-                </Background>
                 <GlobalStyles/>
-            </TriangleConfigContext.Provider>
+                <Background $isLandscape={ isLandscape }>
+
+                    <Container ref={ parentRef }>
+                        <PenroseTriangle {...config }/>
+                    </Container>
+
+                    <ConfigMenu {...{ config, controllers }}/>
+                </Background>
         </ThemeProvider>
     )
-}
+})
 
 export default App
