@@ -13,10 +13,9 @@ import type { CubeModelProps } from '../types'
 const Cube = ({
     isLast,
     size = 1,
-    rotation,
     isRotating,
     isInverted,
-    checkDepth,
+    checkDepth = isRotating,
     ...props
 }: CubeModelProps
 ) => {
@@ -29,8 +28,9 @@ const Cube = ({
             ...props,
             geometry: cubeSlicedGeometry,
             isLast,
-            rotation: [0, isInverted ? -cubeRotationY : cubeRotationY, 45],
-            checkDepth: checkDepth || isRotating,
+            rotationY: isInverted ? -cubeRotationY : cubeRotationY,
+            rotationZ: 45,
+            checkDepth,
             ref: groupRef,
         }}/>
     );

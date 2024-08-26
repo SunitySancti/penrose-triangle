@@ -3,14 +3,14 @@ import styled,
 import { Box } from '@mui/material'
 import { PenroseTriangle,
          usePenroseTriangle } from 'react-penrose-triangle'
+import { observer } from 'mobx-react-lite'
 
-import ConfigMenu from 'components/ConfigMenu'
+import MenuController from 'components/MenuController'
 import GlobalStyles from 'styles/global'
 
 import { useResponsiveBackground } from 'util/hooks'
 
 import { uiStoreInstance } from 'store/ui'
-import { observer } from 'mobx-react-lite'
 
 
 
@@ -18,7 +18,6 @@ const Container = styled(Box)(({ theme }) => ({
     width: `calc(min(100vw, 100vh) - ${ theme.sizes.smallMargin * 2 }px)`,
     height: `calc(min(100vw, 100vh) - ${ theme.sizes.smallMargin * 2 }px)`,
     margin: '10px',
-    border: '2px solid rgba(255, 255, 255, 0.2)',
     borderRadius: '10px',
     overflow: 'hidden',
     ...theme.materials.transparentGlass
@@ -56,7 +55,11 @@ const defaultConfig = Object.freeze({
 
 const App = observer(() => {
     const isLandscape = useResponsiveBackground();
-    const { config, controllers, parentRef } = usePenroseTriangle(defaultConfig)
+    const { props,
+            geometry,
+            material,
+            light,
+            parentRef } = usePenroseTriangle(defaultConfig);
 
     return (
         <ThemeProvider theme={ uiStoreInstance.theme }>
@@ -64,10 +67,11 @@ const App = observer(() => {
                 <Background $isLandscape={ isLandscape }>
 
                     <Container ref={ parentRef }>
-                        <PenroseTriangle {...config }/>
+                        <PenroseTriangle {...props }/>
                     </Container>
 
-                    <ConfigMenu {...{ config, controllers }}/>
+                    <MenuController {...{ geometry, material, light }}/>
+
                 </Background>
         </ThemeProvider>
     )

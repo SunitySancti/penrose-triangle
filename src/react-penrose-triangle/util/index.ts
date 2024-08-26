@@ -50,7 +50,7 @@ export const arraify = (value: any) => {
     }
 }
 
-export const numberify = (value: any, fallback?: number) => {
+export const numberify = <T extends number | undefined>(value: any, fallback: T) => {
     if(typeof value === 'string') {
         value = Number(value)
     }
@@ -60,3 +60,7 @@ export const numberify = (value: any, fallback?: number) => {
         return fallback
     }
 }
+
+export const boolify = (value: any, fallback: boolean) => (
+    value === undefined ? fallback : !!value
+)

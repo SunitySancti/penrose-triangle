@@ -1,7 +1,9 @@
 import { useState,
-         useEffect } from 'react'
+         useEffect,
+         useCallback } from 'react'
 
-import type { RefObject } from 'react'
+import type { MouseEventHandler,
+              RefObject } from 'react'
 
 
 export const useElementSizes = (ref?: RefObject<HTMLElement> | undefined) => {
@@ -49,4 +51,43 @@ export const useElementSizes = (ref?: RefObject<HTMLElement> | undefined) => {
 export const useResponsiveBackground = () => {
     const { width, height } = useElementSizes();
     return width >= height
+}
+
+export const useMenuController = () => {
+    const [ activeMenu, setActiveMenu ] = useState<'geometry' | 'material' | undefined>(undefined);
+
+    useEffect(() => {
+        const closeMenus = () => setActiveMenu(undefined);
+        window.addEventListener('click', closeMenus);
+        return () => {
+            window.removeEventListener('click', closeMenus);
+        }
+    });
+    const isGeometryActive = activeMenu === 'geometry';
+    const isMaterialActive = activeMenu === 'material';
+
+    const toggleGeometryMenu = useCallback<MouseEventHandler<HTMLDivElement>>((e)=> {
+        e.stopPropagation();
+        if(isGeometryActive) {
+            setActiveMenu(undefined)
+        } else {
+            setActiveMenu('geometry')
+        }
+    },[ isGeometryActive ]);
+
+    const toggleMaterialMenu = useCallback<MouseEventHandler<HTMLDivElement>>((e)=> {
+        e.stopPropagation();
+        if(isMaterialActive) {
+            setActiveMenu(undefined)
+        } else {
+            setActiveMenu('material')
+        }
+    },[ isMaterialActive ]);
+
+    return ({
+        isGeometryActive,
+        isMaterialActive,
+        toggleGeometryMenu,
+        toggleMaterialMenu,
+    })
 }

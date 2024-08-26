@@ -11,7 +11,8 @@ const PenroseTriangleView = ({
     cubeSize,
     diameter = 1,
     rotation = 0,
-    isInverted = false
+    isInverted = false,
+    color
 } : PenroseTriangleViewProps
 ) => (
     <group rotation={[ 0, 0, -degToRad(rotation) ]}>
@@ -25,9 +26,11 @@ const PenroseTriangleView = ({
                         key={ 'cube_' + idxInTotal }
                         order={ idxInTotal + 1 }
                         size={ cubeSize }
-                        coords={[ x, y ]}
+                        positionX={ x }
+                        positionY={ y }
                         isLast={ idxInTotal === totalLength - 1 }
                         isInverted={ isInverted }
+                        color={ color }
                         // material='standard'
                         // isRotating
                     />

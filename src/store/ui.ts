@@ -1,12 +1,11 @@
 import { makeAutoObservable } from 'mobx'
-import { DefaultTheme } from 'styled-components'
 
-import { ThemeEnum } from 'interfaces/styled'
+import { ThemeEnum, BaseTheme } from 'interfaces/styled'
 import { darkTheme, lightTheme } from 'styles/theme'
 
 
 class UIStore {
-    theme: DefaultTheme = lightTheme;
+    theme: BaseTheme = lightTheme;
     
     constructor() {
         makeAutoObservable(this)

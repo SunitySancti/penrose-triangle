@@ -19,7 +19,7 @@ const Material = ({
             return (
                 <meshStandardMaterial
                     color={ color }
-                    roughness={ 1 }
+                    roughness={ 2 }
                     metalness={ 2 }
                     depthWrite={ checkDepth }
                 />
@@ -37,9 +37,11 @@ const Material = ({
 const CubeView = forwardRef<Group, CubeViewProps>(({
     geometry,
     order = 1,
-    coords = [0, 0],
-    zIndex = 0,
-    rotation: [x, y, z] = [0, 0, 0],
+    positionX = 0,
+    positionY = 0,
+    positionZ = 0,
+    rotationY = 0,
+    rotationZ = 0,
     isLast = false,
     checkDepth,
     material,
@@ -48,8 +50,8 @@ const CubeView = forwardRef<Group, CubeViewProps>(({
 ) => (
     <group
         ref={ ref }
-        position={[ ...coords, zIndex ]}
-        rotation={ [degToRad(x), degToRad(y), degToRad(z) ] }
+        position={[ positionX, positionY, positionZ ]}
+        rotation={ [0, degToRad(rotationY), degToRad(rotationZ) ] }
     >
         { arraify(geometry).map((geometry, idx) => (
 

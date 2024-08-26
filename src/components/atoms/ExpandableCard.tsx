@@ -1,5 +1,4 @@
-import { useState,
-         memo,
+import { memo,
          useMemo,
          useRef } from 'react'
 import { Box } from '@mui/material'
@@ -36,7 +35,6 @@ const StyledIcon = styled(Box)({
 const StyledBackground = styled(Box)(({ theme }) => ({
     position: 'absolute',
     background: 'rgba(255, 255, 255, 0.9)',
-    border: '1px solid hsla(0, 0%, 100%, 0.7)',
     '&:hover': theme.materials.mateGlass,
 }));
 
@@ -46,40 +44,44 @@ const ExpandableCard = memo(({
     children,
     isBottom = false,
     isLeft = false,
+    isExpanded,
+    toggleExpansion
 } : ExpandableCardProps
 ) => {
     const containerRef = useRef(null);
-    
-    const [isExpanded, setIsExpanded] = useState(false);
-    const toggleExpansion = () => {
-        setIsExpanded(!isExpanded)
-    };
 
     const theme = useTheme();
-    const { unit,
+    const { width: windowWidth } = useElementSizes();
+    const breakpoint = 440;
+    const { largeMargin,
             borderRadius,
             buttonSize } = theme.sizes;
 
     const { resizeTransition } = theme.durations;
     
-    const { height: windowHeight, width: windowWidth } = useElementSizes();
-    const breakpoint = 440;
-    const paddingSize = useMemo(() => (
-        (windowHeight > breakpoint && windowWidth > breakpoint)
-            ? unit
+    const vertPadding = largeMargin;
+    const horPadding = useMemo(() => (
+        (windowWidth > breakpoint)
+            ? largeMargin
             : 2
-    ),[ windowHeight,
-        windowWidth
-    ]);
+    ),[ windowWidth ]);
 
-    const { height: containerHeight, scrollWidth, scrollHeight } = useElementSizes(containerRef);
+    const { width: containerWidth, height: containerHeight, scrollWidth, scrollHeight } = useElementSizes(containerRef);
     const backgroundHeight = useMemo(() => (
-        containerHeight + 2 * paddingSize < window.innerHeight
+        containerHeight + 2 * vertPadding < window.innerHeight
             ? containerHeight
             : scrollHeight
     ),[ containerHeight,
         scrollHeight,
-        paddingSize
+        vertPadding
+    ]);
+    const backgroundWidth = useMemo(() => (
+        containerWidth + 2 * horPadding < window.innerWidth
+            ? containerWidth
+            : scrollWidth
+    ),[ containerWidth,
+        scrollWidth,
+        horPadding
     ]);
 
     const verticalAlignments = (margin: number) => isBottom
@@ -93,12 +95,14 @@ const ExpandableCard = memo(({
     return (
         <StyledContainer
             ref={ containerRef }
+            onClick={ e => e.stopPropagation() }
             style={{
-                ...verticalAlignments(paddingSize),
-                ...horizontalAlignments(paddingSize),
-                padding: isExpanded ? paddingSize : undefined,
-                maxWidth: `calc(100vw - 2 * ${ paddingSize }px)`,
-                maxHeight: `calc(100vh - 2 * ${ paddingSize }px)`,
+                ...verticalAlignments(vertPadding),
+                ...horizontalAlignments(horPadding),
+                zIndex: isExpanded ? 1 : 0,
+                padding: isExpanded ? `${ vertPadding }px ${ horPadding }px` : undefined,
+                maxWidth: `calc(100vw - 2 * ${ horPadding }px)`,
+                maxHeight: `calc(100vh - 2 * ${ vertPadding }px)`,
                 overflow: isExpanded ? 'auto' : 'visible',
                 borderRadius,
             }}
@@ -108,7 +112,7 @@ const ExpandableCard = memo(({
                 onClick={ toggleExpansion }
                 style={{
                     position: isExpanded ? 'absolute' : 'relative',
-                    zIndex: 1,
+                    zIndex: isExpanded ? 2 : 1,
                     ...verticalAlignments(0),
                     ...horizontalAlignments(0),
                 }}
@@ -125,10 +129,11 @@ const ExpandableCard = memo(({
                 style={{
                     ...verticalAlignments(0),
                     ...horizontalAlignments(0),
-                    width: scrollWidth,
+                    width: backgroundWidth,
                     height: backgroundHeight,
                     borderRadius,
                     transition: `all ${ resizeTransition }s ease`,
+                    border: '1px solid rgba(0, 0, 0, 0.3)',
                     ...isExpanded ? theme.materials.mateGlass : {},
                 }}
             />

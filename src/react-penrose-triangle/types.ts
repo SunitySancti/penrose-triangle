@@ -1,5 +1,7 @@
 import { useCubeGeometry } from './util/hooks'
-import { PenroseTriangleConfigStore } from './store'
+import GeometryStore from './store/GeometryStore'
+import MaterialStore from './store/MaterialStore'
+import LightStore from './store/LightStore'
 
 import type { RefObject} from 'react'
 import type { Vector2 } from 'three'
@@ -15,35 +17,63 @@ export interface CubesDataParams {
     isInverted: boolean
 }
 
-type RequiredProperties<T> = {
+// HELPERS //
+
+type Required<T> = {
     [K in keyof T]-?: T[K];
-};
-type Actions<T> = {
-    [K in keyof T]: T[K] extends (...args: any[]) => any ? T[K] : never;
-};
+}
+type Optional<T extends {[prop: string]: any}> = {
+    [K in keyof T]?: T[K]
+}
+type Properties<T> = {  
+    [K in keyof T]: T[K] extends Function ? never : K  
+}[keyof T];  
+
+type Config<Store> = Pick<Store, Properties<Store>>;
+type Actions<Store> = Omit<Store, keyof Config<Store>>
 
 type GroupedPoints = Vector2[][];
 type GeometryLike = ReturnType<typeof useCubeGeometry>;
 export type NumberLike = number | string; 
 
-// CONFIG //
+// STORES //
 
-export interface PenroseTriangleDefaultValues {
-    cubesInSide?: number,
-    gapRatio?: number,
-    diameter?: number,
-    rotation?: number,
-    rotationSpeed?: number,
-    isRotating?: boolean,
-    isInverted?: boolean,
+export type GeometryConfig = Config<GeometryStore>
+export type MaterialConfig = Config<MaterialStore>
+export type LightConfig = Omit<Config<LightStore>, 'geometryStore' | 'angle'>
+
+export type GeometryControllers = Actions<GeometryStore>
+export type MaterialControllers = Actions<MaterialStore>
+export type LightControllers = Actions<LightStore>
+
+export interface GroupedConfig {
+    geometry: GeometryConfig,
+    material: MaterialConfig,
+    light: LightConfig,
+}
+export interface GroupedControllers {
+    geometry: GeometryControllers,
+    material: MaterialControllers,
+    light: LightControllers,
+}
+export interface GeometrySlice {
+    config: GeometryConfig,
+    controllers: GeometryControllers,
+}
+export interface MaterialSlice {
+    config: MaterialConfig,
+    controllers: MaterialControllers,
+}
+export interface LightSlice {
+    config: LightConfig,
+    controllers: LightControllers,
 }
 
-export interface PenroseTriangleConfig extends RequiredProperties<PenroseTriangleDefaultValues> {
+export type PenroseTriangleDefaultValues = Optional<GeometryConfig & MaterialConfig & LightConfig>
+export interface PenroseTriangleProps extends Required<PenroseTriangleDefaultValues> {
     parentRef: RefObject<HTMLElement>,
     rotate: (degrees: NumberLike) => void,
 }
-
-export type PenroseTriangleControllers = Actions<PenroseTriangleConfigStore>
 
 // COMPONENT INTERFACES //    
 
@@ -51,16 +81,18 @@ interface TriangleCommonProps {
     diameter?: number,      // диаметр описанной окружности в единицах Canvas
 	rotation?: number,      // угол поворота треугольника по часовой стрелке в градусах
     isInverted?: boolean,   // направление отрисовки геометрии
+    color?: string,
 }
 
-export interface PenroseTriangleProps extends TriangleCommonProps {
+export interface PenroseTriangleModelProps extends TriangleCommonProps {
     rotate: (value: number | string) => void,
-    parentRef?: RefObject<HTMLElement>,
 	cubesInSide?: number,   // количество кубов в стороне треугольника
-	// children?: ReactNode,   // список элементов, которые будут маппиться в центры кубов
 	gapRatio?: number,      // расстояние между кубами, выраженное в длинах куба [0,1]
     rotationSpeed?: number, // скорость вращения треугольника (по часовой стрелке)
     isRotating?: boolean,
+}
+
+export interface SceneProps extends PenroseTriangleProps {
 }
 
 export interface PenroseTriangleViewProps extends TriangleCommonProps {
@@ -70,9 +102,11 @@ export interface PenroseTriangleViewProps extends TriangleCommonProps {
 
 interface CubeCommonProps {
     order?: number,
-    coords?: [number, number],
-    zIndex?: number,
-    rotation?: [number, number, number],
+    positionX?: number,
+    positionY?: number,
+    positionZ?: number,
+    rotationY?: number,
+    rotationZ?: number,
     isLast?: boolean,
     checkDepth?: boolean,
     material?: 'standard' | 'normal',

@@ -1,7 +1,6 @@
 import { useMemo,
          useState,
          useCallback } from 'react'
-import { useDeepCompareMemo } from 'use-deep-compare'
          
 import TriangleRotationControllerView from './view.tsx'
 
@@ -36,22 +35,6 @@ const TriangleRotationController = ({
     const [ isInnerHovering, setIsInnerHovering ] = useState(false);
     const [ isOuterActive, setIsOuterActive ] = useState(false);
     const [ isInnerActive, setIsInnerActive ] = useState(false);
-    
-    const styleConfig = useDeepCompareMemo(() => ({
-        colors: {
-            fill_1: '#EEE',
-            fill_2: '##E3E3E3',
-            fill_3: '#C5C5C5',
-            stroke_1: '#C5C5C5',
-            stroke_2: '#000',
-            ...styles?.colors || {}
-        },
-        strokeWidths: {
-            thin: 1,
-            bold: 3,
-            ...styles?.strokeWidths || {}
-        }
-    }),[ styles ]);
 
     const geometryConfig = useMemo(() => ({
         outerCircle,
@@ -131,10 +114,10 @@ const TriangleRotationController = ({
             isHovering: isOuterHovering || isInnerHovering,
             innerAngle: innerValue,
             outerAngle,
-            styleConfig,
+            styleConfig: styles,
             geometryConfig,
         }}/>
     );
 };
 
-export default TriangleRotationController;
+export default TriangleRotationController
