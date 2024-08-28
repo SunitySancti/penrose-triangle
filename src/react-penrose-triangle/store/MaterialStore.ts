@@ -1,21 +1,21 @@
 import { makeAutoObservable } from 'mobx'
 
 import type { MaterialConfig,
-              PenroseTriangleDefaultValues } from '../types'
+              MaterialInititalValues } from '../types'
 
 
-const initial: MaterialConfig = Object.freeze({
-    color: '#ddd200'
+export const defaultMaterial: MaterialConfig = Object.freeze({
+    color: '#c081de'
 });
 
 class MaterialStore {
     color: string
     
-    constructor(defaultValues?: PenroseTriangleDefaultValues) {
+    constructor(defaultValues: MaterialInititalValues = {}) {
         makeAutoObservable(this);
-        const { color } = defaultValues || {};
+        const { color } = defaultValues;
 
-        this.color = color || initial.color
+        this.color = color || defaultMaterial.color
     }
 
     setColor = (value: string) => {

@@ -1,15 +1,34 @@
+import { usePenroseTriangle } from './store'
 import { useCubeGeometry } from './util/hooks'
+
 import GeometryStore from './store/GeometryStore'
 import MaterialStore from './store/MaterialStore'
 import LightStore from './store/LightStore'
 
-import type { RefObject} from 'react'
 import type { Vector2 } from 'three'
+import { RefObject } from 'react'
 
+
+// HELPERS //
+
+type Optional<T extends {[prop: string]: any}> = {
+    [K in keyof T]?: T[K]
+}
+
+type Properties<T> = {
+    [K in keyof T]: T[K] extends Function ? never : K
+}[keyof T]
+
+// HOOKS //
+
+type GroupedPoints = Vector2[][];
+type GeometryLike = ReturnType<typeof useCubeGeometry>;
+export type NumberLike = number | string;
 
 export interface Vertices {
     [vertex: string]: Vector2
 }
+
 export interface CubesDataParams {
     cubesInSide: number,
     gapRatio: number,
@@ -17,28 +36,28 @@ export interface CubesDataParams {
     isInverted: boolean
 }
 
-// HELPERS //
-
-type Required<T> = {
-    [K in keyof T]-?: T[K];
+export interface TriangleRotationParams {
+    rotation: number,
+    rotationSpeed: number,
+    isRotating: boolean,
+    setRotation?: (value: number | string) => void,
+    lightRotation: number,
+    binding: false | number,
 }
-type Optional<T extends {[prop: string]: any}> = {
-    [K in keyof T]?: T[K]
-}
-type Properties<T> = {  
-    [K in keyof T]: T[K] extends Function ? never : K  
-}[keyof T];  
-
-type Config<Store> = Pick<Store, Properties<Store>>;
-type Actions<Store> = Omit<Store, keyof Config<Store>>
-
-type GroupedPoints = Vector2[][];
-type GeometryLike = ReturnType<typeof useCubeGeometry>;
-export type NumberLike = number | string; 
 
 // STORES //
 
-export type GeometryConfig = Config<GeometryStore>
+type Config<Store> = Pick<Store, Properties<Store>>;
+type Actions<Store> = Omit<Store, keyof Config<Store>>
+export type HookReturn = ReturnType<typeof usePenroseTriangle>
+
+export type GroupedConfig = HookReturn['config']
+export type GroupedControllers = HookReturn['controllers']
+export type GeometrySlice = HookReturn['geometry']
+export type MaterialSlice = HookReturn['material']
+export type LightSlice = HookReturn['light']
+
+export type GeometryConfig = GeometrySlice['config']
 export type MaterialConfig = Config<MaterialStore>
 export type LightConfig = Omit<Config<LightStore>, 'geometryStore' | 'angle'>
 
@@ -46,53 +65,47 @@ export type GeometryControllers = Actions<GeometryStore>
 export type MaterialControllers = Actions<MaterialStore>
 export type LightControllers = Actions<LightStore>
 
-export interface GroupedConfig {
+export type GeometryInititalValues = Optional<Config<GeometryStore>>
+export type MaterialInititalValues = Optional<Config<MaterialStore>>
+export type LightInititalValues = Optional<Config<LightStore>>
+
+export interface PenroseTriangleInitialValues {
+    geometry?: GeometryInititalValues,
+    material?: MaterialInititalValues,
+    light?: LightInititalValues,
+}
+
+// COMPONENTS //
+
+export interface PenroseTriangleProps {
+    geometry?: Optional<GeometryConfig>,
+    material?: Optional<MaterialConfig>,
+    light?: Optional<LightConfig>,
+    parentRef?: RefObject<HTMLElement>,
+    setRotation?: (value: NumberLike) => void,
+}
+
+export interface SceneProps {
     geometry: GeometryConfig,
     material: MaterialConfig,
     light: LightConfig,
+    parentRef?: RefObject<HTMLElement>,
+    setRotation?: (value: NumberLike) => void,
 }
-export interface GroupedControllers {
-    geometry: GeometryControllers,
-    material: MaterialControllers,
-    light: LightControllers,
-}
-export interface GeometrySlice {
-    config: GeometryConfig,
-    controllers: GeometryControllers,
-}
-export interface MaterialSlice {
-    config: MaterialConfig,
-    controllers: MaterialControllers,
-}
-export interface LightSlice {
-    config: LightConfig,
-    controllers: LightControllers,
-}
-
-export type PenroseTriangleDefaultValues = Optional<GeometryConfig & MaterialConfig & LightConfig>
-export interface PenroseTriangleProps extends Required<PenroseTriangleDefaultValues> {
-    parentRef: RefObject<HTMLElement>,
-    rotate: (degrees: NumberLike) => void,
-}
-
-// COMPONENT INTERFACES //    
 
 interface TriangleCommonProps {
-    diameter?: number,      // диаметр описанной окружности в единицах Canvas
-	rotation?: number,      // угол поворота треугольника по часовой стрелке в градусах
-    isInverted?: boolean,   // направление отрисовки геометрии
-    color?: string,
+    diameter: number,
+	rotation: number,
+    isInverted: boolean,
+    color: string,
 }
 
 export interface PenroseTriangleModelProps extends TriangleCommonProps {
-    rotate: (value: number | string) => void,
-	cubesInSide?: number,   // количество кубов в стороне треугольника
-	gapRatio?: number,      // расстояние между кубами, выраженное в длинах куба [0,1]
-    rotationSpeed?: number, // скорость вращения треугольника (по часовой стрелке)
-    isRotating?: boolean,
-}
-
-export interface SceneProps extends PenroseTriangleProps {
+    useAutoRotation: () => void,
+	cubesInSide: number,
+	gapRatio: number,
+    rotationSpeed: number,
+    isRotating: boolean,
 }
 
 export interface PenroseTriangleViewProps extends TriangleCommonProps {

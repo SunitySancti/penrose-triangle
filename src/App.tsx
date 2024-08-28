@@ -6,22 +6,13 @@ import { PenroseTriangle,
 import { observer } from 'mobx-react-lite'
 
 import MenuController from 'components/MenuController'
+import TriangleContainer from 'components/TriangleContainer'
 import GlobalStyles from 'styles/global'
 
 import { useResponsiveBackground } from 'util/hooks'
 
 import { uiStoreInstance } from 'store/ui'
 
-
-
-const Container = styled(Box)(({ theme }) => ({
-    width: `calc(min(100vw, 100vh) - ${ theme.sizes.smallMargin * 2 }px)`,
-    height: `calc(min(100vw, 100vh) - ${ theme.sizes.smallMargin * 2 }px)`,
-    margin: '10px',
-    borderRadius: '10px',
-    overflow: 'hidden',
-    ...theme.materials.transparentGlass
-}));
 
 const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape }) => ({
     width: '100vw',
@@ -44,18 +35,24 @@ const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape })
 }));
 
 const defaultConfig = Object.freeze({
-    cubesInSide: 4,
-    gapRatio: 0.5,
-    diameter: 1.1,
-    rotation: 60,
-    rotationSpeed: 30,
-    isRotating: true,
-    isInverted: true
+    geometry: {
+        cubesInSide: 4,
+        gapRatio: 0.5,
+        diameter: 1,
+        rotation: 60,
+        rotationSpeed: 30,
+        isRotating: true,
+        isInverted: true,
+    },
+    light: {
+        binding: 0,
+    }
 });
 
 const App = observer(() => {
     const isLandscape = useResponsiveBackground();
     const { props,
+            config,
             geometry,
             material,
             light,
@@ -66,15 +63,18 @@ const App = observer(() => {
                 <GlobalStyles/>
                 <Background $isLandscape={ isLandscape }>
 
-                    <Container ref={ parentRef }>
+                    <TriangleContainer {...{
+                        ref: parentRef,
+                        config
+                    }}>
                         <PenroseTriangle {...props }/>
-                    </Container>
+                    </TriangleContainer>
 
                     <MenuController {...{ geometry, material, light }}/>
 
                 </Background>
         </ThemeProvider>
     )
-})
+});
 
 export default App

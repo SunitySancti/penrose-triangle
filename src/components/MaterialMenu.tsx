@@ -1,4 +1,5 @@
-import { useCallback } from 'react'
+import { useCallback,
+         memo } from 'react'
 import { List,
          Box } from '@mui/material'
 import BrushIcon from '@mui/icons-material/Brush'
@@ -9,6 +10,7 @@ import LightPositionController from 'components/LightPositionController'
 import { ListItemSlider,
          ListItemCheckbox,
          ListItemColorInput } from 'components/atoms/StyledControllers'
+import { uiStoreInstance } from 'store/ui'
 
 import type { MaterialMenuProps } from 'interfaces/components'
 
@@ -42,7 +44,7 @@ const FlexFadeInList = styled(List)<{ $isFirst?: boolean }>(({ $isFirst, theme }
     },
 }));
 
-const MaterialMenu = ({
+const MaterialMenu = memo(({
     geometry,
     material,
     light,
@@ -53,26 +55,28 @@ const MaterialMenu = ({
 ) => {
     const { rotation: geometryRotation } = geometry.config;
     const { color } = material.config;
-    const { setColor } = material.controllers;
-    const { lightIntensity,
+    const { intensity,
             brightness,
-            lightRotation,
-            lightElevation,
-            lightBinding } = light.config;
-    const { setlightIntensity,
+            rotation,
+            elevation,
+            binding } = light.config;
+    const { setColor } = material.controllers;
+    const { setPrimaryColor } = uiStoreInstance;
+    const { setIntensity,
             setBrightness,
-            setLightRotation,
-            setlightElevation,
-            togglelightBinding } = light.controllers;
+            setRotation,
+            setElevation,
+            toggleBinding } = light.controllers;
   
     const handleColorChange = useCallback((newValue: string) => {
         setColor(newValue)
+        setPrimaryColor(newValue)
     },[]);
-    const handlelightElevationChange = useCallback((_e: any, value: number | number[]) => {
-        setlightElevation(value as number)
+    const handleElevationChange = useCallback((_e: any, value: number | number[]) => {
+        setElevation(value as number)
     },[]);
-    const handlelightIntensityChange = useCallback((_e: any, value: number | number[]) => {
-        setlightIntensity(value as number)
+    const handleIntensityChange = useCallback((_e: any, value: number | number[]) => {
+        setIntensity(value as number)
     },[]);
     const handleBrightnessChange = useCallback((_e: any, value: number | number[]) => {
         setBrightness(value as number)
@@ -99,14 +103,14 @@ const MaterialMenu = ({
                         value={ brightness }
                         onChange={ handleBrightnessChange }
                         min={ 0 }
-                        max={ 5 }
-                        step={ 0.1 }
+                        max={ 2.5 }
+                        step={ 0.05 }
                     />
 
                     <ListItemSlider
                         label='Spot light elevation'
-                        value={ lightElevation }
-                        onChange={ handlelightElevationChange }
+                        value={ elevation }
+                        onChange={ handleElevationChange }
                         min={ 0 }
                         max={ 5 }
                         step={ 0.1 }
@@ -114,8 +118,8 @@ const MaterialMenu = ({
 
                     <ListItemSlider
                         label='Spot light intensity'
-                        value={ lightIntensity }
-                        onChange={ handlelightIntensityChange }
+                        value={ intensity }
+                        onChange={ handleIntensityChange }
                         min={ 0 }
                         max={ 25 }
                         step={ 0.5 }
@@ -127,16 +131,16 @@ const MaterialMenu = ({
                 
                     <LightPositionController
                         innerValue={ geometryRotation }
-                        outerValue={ lightRotation }
-                        onOuterChange={ setLightRotation }
+                        outerValue={ rotation }
+                        onOuterChange={ setRotation }
                         styles={ controllerStyles }
                     />
 
                     <ListItemCheckbox
                         label='Pin spot light to geometry'
                         align='center'
-                        checked={ !!lightBinding }
-                        onChange={ togglelightBinding }
+                        checked={ typeof binding === 'number' }
+                        onChange={ toggleBinding }
                     />
 
                 </FlexFadeInList>
@@ -144,6 +148,6 @@ const MaterialMenu = ({
 
         </ExpandableCard>
     );  
-}
+})
 
 export default MaterialMenu

@@ -94,3 +94,7 @@ export interface MenuControllerProps {
     material: MaterialSlice,
     light: LightSlice,
 }
+
+export interface TriangleContainerProps {
+    children: ReactNode
+}

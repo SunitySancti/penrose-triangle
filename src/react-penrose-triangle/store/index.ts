@@ -6,28 +6,36 @@ import GeometryStore from './GeometryStore'
 import MaterialStore from './MaterialStore'
 import LightStore from './LightStore'
 
-import type { GeometryConfig,
-              MaterialConfig,
-              LightConfig,
-              GeometryControllers,
+import { defaultGeometry } from './GeometryStore'
+import { defaultMaterial } from './MaterialStore'
+import { defaultLight } from './LightStore'
+
+import type { GeometryControllers,
               MaterialControllers,
               LightControllers,
               PenroseTriangleProps,
-              PenroseTriangleDefaultValues } from '../types'
+              PenroseTriangleInitialValues } from '../types'
 
+export const defaultValues = {
+    defaultGeometry,
+    defaultMaterial,
+    defaultLight
+}
 
-
-export const usePenroseTriangle = (defaultValues?: PenroseTriangleDefaultValues) => {
-    const [ geometryStore ] = useState(() => new GeometryStore(defaultValues));
-    const [ materialStore ] = useState(() => new MaterialStore(defaultValues));
-    const [ lightStore ] = useState(() => new LightStore(geometryStore, defaultValues));
+export const usePenroseTriangle = (initialValues: PenroseTriangleInitialValues = {}) => {
+    const { geometry: initialGeometry,
+            material: initialMaterial,
+            light: initialLight } = initialValues;
+    const [ geometryStore ] = useState(() => new GeometryStore(initialGeometry));
+    const [ materialStore ] = useState(() => new MaterialStore(initialMaterial));
+    const [ lightStore ] = useState(() => new LightStore(geometryStore, initialLight));
 
     const { cubesInSide, gapRatio, diameter, rotation, rotationSpeed, isRotating, isInverted, setCubesInSide, setGapRatio, setDiameter, setRotation, rotate, setRotationSpeed, toggleAutoRotation, toggleRotationDirection, toggleGeometryInvertion } = geometryStore;
     const { color, setColor } = materialStore;
-    const { lightIntensity, brightness, lightElevation, lightPosition, lightBinding, lightRotation, setlightIntensity, setBrightness, setLightRotation, setlightElevation, togglelightBinding  } = lightStore;
+    const { intensity, brightness, elevation, binding, rotation: lightRotation, setIntensity, setBrightness, setRotation: setLightRotation, setElevation, toggleBinding  } = lightStore;
 
 
-    const geometryConfig: GeometryConfig = useMemo(() => ({
+    const geometryConfig = useMemo(() => ({
         cubesInSide,
         gapRatio,
         diameter,
@@ -37,18 +45,17 @@ export const usePenroseTriangle = (defaultValues?: PenroseTriangleDefaultValues)
         isInverted,
     }),[ cubesInSide, gapRatio, diameter, rotation, rotationSpeed, isRotating, isInverted ]);
 
-    const materialConfig: MaterialConfig = useMemo(() => ({
+    const materialConfig = useMemo(() => ({
         color,
     }),[ color ]);
 
-    const lightConfig: LightConfig = useMemo(() => ({
-        lightElevation,
-        lightIntensity,
-        lightBinding,
-        lightPosition,
-        lightRotation,
+    const lightConfig = useMemo(() => ({
+        elevation,
+        rotation: lightRotation,
+        binding,
+        intensity,
         brightness,
-    }),[ lightIntensity, brightness, lightElevation, lightBinding, lightPosition, lightRotation ]);
+    }),[ intensity, brightness, elevation, binding, rotation ]);
 
     const geometryControllers: GeometryControllers = useMemo(() => ({
         setCubesInSide,
@@ -67,29 +74,23 @@ export const usePenroseTriangle = (defaultValues?: PenroseTriangleDefaultValues)
     }),[ setColor ]);
 
     const lightControllers: LightControllers = useMemo(() => ({
-        setlightIntensity,
+        setIntensity,
         setBrightness,
-        setLightRotation,
-        setlightElevation,
-        togglelightBinding,
-    }),[ setlightIntensity, setBrightness, setLightRotation, setlightElevation, togglelightBinding ]);
+        setRotation: setLightRotation,
+        setElevation,
+        toggleBinding,
+    }),[ setIntensity, setBrightness, setRotation, setElevation, toggleBinding ]);
 
     
     const parentRef = useRef<HTMLElement>(null);
 
     const props: PenroseTriangleProps = useMemo(() => ({
-        ...geometryConfig,
-        ...materialConfig,
-        ...lightConfig,
+        geometry: geometryConfig,
+        material: materialConfig,
+        light: lightConfig,
         parentRef,
-        rotate,
-    }),[
-        ...Object.values(geometryConfig),
-        ...Object.values(materialConfig),
-        ...Object.values(lightConfig),
-        parentRef,
-        rotate
-    ]);
+        setRotation,
+    }),[ geometryConfig, materialConfig, lightConfig, parentRef, setRotation ]);
 
     const config = useMemo(() => ({
         geometry: geometryConfig,

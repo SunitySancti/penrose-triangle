@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
+import { useTheme } from 'styled-components'
 
 import type { TriangleRotationControllerViewProps } from 'interfaces/components'
 
@@ -10,7 +12,7 @@ const Container = styled.div`
     display: inline-block;
 `
 
-const TriangleRotationControllerView = ({
+const TriangleRotationControllerView = observer(({
     handleMouseMove,
     handleMouseDown,
     cleanUp,
@@ -21,8 +23,11 @@ const TriangleRotationControllerView = ({
     geometryConfig,
 } : TriangleRotationControllerViewProps
 ) => {
-    const { colors, strokeWidths } = styleConfig;
-    const { outerCircle, innerCircle } = geometryConfig;
+    const { primary } = useTheme().palette;
+    const { colors,
+            strokeWidths } = styleConfig;
+    const { outerCircle,
+            innerCircle } = geometryConfig;
     
     const { cx, cy, r } = outerCircle;
     const rad = (outerAngle - 90) * Math.PI / 180;
@@ -67,7 +72,7 @@ const TriangleRotationControllerView = ({
                         translate (${ arcEnd.x - 12.5 } ${ arcEnd.y - 12.5 })
                         rotate(${ outerAngle > 0 ? outerAngle + 90 : outerAngle < 0 ? outerAngle -90 : 180 }, 12.5, 12.5)
                     ` }
-                    fill={ colors.fill_controller }
+                    fill={ primary }
                     stroke={ colors.stroke_2 }
                     strokeWidth={ strokeWidths.bold }
                 />
@@ -80,7 +85,7 @@ const TriangleRotationControllerView = ({
                     />
                     <path
                         d="M180 71.2539L187.43 84.1239H172.569L180 71.2539Z"
-                        fill={ colors.fill_controller }
+                        fill={ primary }
                         stroke={ colors.stroke_2 }
                         strokeWidth={ strokeWidths.bold }
                     />
@@ -109,6 +114,6 @@ const TriangleRotationControllerView = ({
             </svg>
         </Container>
     );
-};
+});
 
 export default TriangleRotationControllerView

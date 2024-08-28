@@ -5,10 +5,10 @@ import { numberify,
 
 import type { NumberLike,
               GeometryConfig,
-              PenroseTriangleDefaultValues } from '../types'
+              GeometryInititalValues } from '../types'
 
 
-const initial: GeometryConfig = Object.freeze({
+export const defaultGeometry: GeometryConfig = Object.freeze({
     cubesInSide: 5,
     gapRatio: 0.2,
     diameter: 1,
@@ -27,17 +27,17 @@ class GeometryStore {
     isRotating: boolean
     isInverted: boolean
     
-    constructor(defaultValues?: PenroseTriangleDefaultValues) {
+    constructor(initialValues: GeometryInititalValues = {}) {
         makeAutoObservable(this);
-        const { cubesInSide, gapRatio, diameter, rotation, rotationSpeed, isRotating, isInverted } = defaultValues || {};
+        const { cubesInSide, gapRatio, diameter, rotation, rotationSpeed, isRotating, isInverted } = initialValues;
 
-        this.cubesInSide = numberify(cubesInSide, initial.cubesInSide)!;
-        this.gapRatio = numberify(gapRatio, initial.gapRatio)!;
-        this.diameter = numberify(diameter, initial.diameter)!;
-        this.rotation = numberify(rotation, initial.rotation)!;
-        this.rotationSpeed = numberify(rotationSpeed, initial.rotationSpeed)!;
-        this.isRotating = boolify(isRotating, initial.isRotating);
-        this.isInverted = boolify(isInverted, initial.isInverted);
+        this.cubesInSide = numberify(cubesInSide, defaultGeometry.cubesInSide)!;
+        this.gapRatio = numberify(gapRatio, defaultGeometry.gapRatio)!;
+        this.diameter = numberify(diameter, defaultGeometry.diameter)!;
+        this.rotation = numberify(rotation, defaultGeometry.rotation)!;
+        this.rotationSpeed = numberify(rotationSpeed, defaultGeometry.rotationSpeed)!;
+        this.isRotating = boolify(isRotating, defaultGeometry.isRotating);
+        this.isInverted = boolify(isInverted, defaultGeometry.isInverted);
     }
 
     setCubesInSide = (value: NumberLike) => {
@@ -54,7 +54,7 @@ class GeometryStore {
 
     setRotation = (value: NumberLike) => {
         let newValue = numberify(value, this.rotation);
-        
+
         while(newValue > 360) newValue -= 360;
         while(newValue < 0) newValue += 360;
 

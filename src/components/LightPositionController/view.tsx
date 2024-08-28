@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
+import { useTheme } from 'styled-components'
 
 import type { LightPositionControllerViewProps } from 'interfaces/components'
 
@@ -10,7 +12,7 @@ const Container = styled.div`
     display: inline-block;
 `
 
-const LightPositionControllerView = ({
+const LightPositionControllerView = observer(({
     handleMouseMove,
     handleMouseDown,
     cleanUp,
@@ -21,6 +23,7 @@ const LightPositionControllerView = ({
     geometryConfig,
 } : LightPositionControllerViewProps
 ) => {
+    const { primary } = useTheme().palette;
     const { colors,
             strokeWidths } = styleConfig;
     const { outerCircle } = geometryConfig;
@@ -51,7 +54,7 @@ const LightPositionControllerView = ({
                         cx="180"
                         cy="30"
                         r="15"
-                        fill={ colors.fill_controller }
+                        fill={ primary }
                         stroke={ colors.stroke_2 }
                         strokeWidth={ strokeWidths.bold }
                     />
@@ -87,6 +90,6 @@ const LightPositionControllerView = ({
             </svg>
         </Container>
     );
-};
+});
 
 export default LightPositionControllerView

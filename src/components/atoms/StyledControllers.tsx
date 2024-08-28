@@ -1,5 +1,6 @@
 import { memo,
          useMemo } from 'react'
+import { observer } from 'mobx-react-lite'
 import { ListItem,
          ListItemText,
          Slider,
@@ -11,7 +12,6 @@ import { MuiColorInput } from 'mui-color-input'
 import   styled,
        { useTheme } from 'styled-components'
 import { darken,
-         lighten,
          rgba } from 'polished'
 
 import Icon from 'components/atoms/Icon'
@@ -30,15 +30,14 @@ interface ListItemSliderProps extends SliderProps {
     label: string,
 }
 
-export const ListItemSlider = memo(({
+export const ListItemSlider = observer(({
     label,
     ...props
 }: ListItemSliderProps
 ) => {
     const { primary } = useTheme().palette;
-    const slider = darken(0.3, primary);
-    const thumbFill = lighten(0.2, primary);
-    const thumbStroke = darken(0.4, primary);
+    const sliderColor = darken(0.25, primary);
+    const borderColor = darken(0.4, primary);
     return <>
         <StyledListItem>
             <ListItemText primary={ label } />
@@ -48,10 +47,10 @@ export const ListItemSlider = memo(({
                 aria-label={ label }
                 {...props}
                 sx={{  
-                    color: slider,
+                    color: sliderColor,
                     '& .MuiSlider-thumb': {  
-                      backgroundColor: thumbFill,
-                      border: '2px solid ' + thumbStroke,
+                      backgroundColor: primary,
+                      border: '2px solid ' + borderColor,
                     },
                   }}  
             />
@@ -65,14 +64,14 @@ interface ListItemCheckboxProps extends CheckboxProps {
     align?: 'center' | 'flex-start'
 }
 
-export const ListItemCheckbox = memo(({
+export const ListItemCheckbox = observer(({
     label,
     align = 'flex-start',
     ...props
 }: ListItemCheckboxProps
 ) => {
     const { primary } = useTheme().palette;
-    const fill = darken(0.4, primary);
+    const fill = darken(0.3, primary);
     const hover = rgba(primary, 0.2);
 
     return <>
@@ -139,18 +138,16 @@ const FilledCube = ({ colors }: FilledCubeProps) => (
 );
 const OutlinedCube = () => <Icon name='outlinedCube'/>
 
-export const CubesNumberController = memo(({
+export const CubesNumberController = observer(({
     label,
     ...props
 }: CubesNumberControllerProps
 ) => {
     const { palette } = useTheme();
-    const stroke = palette.gray_70;
+    const stroke = darken(0.9, palette.primary);
     const face_1 = palette.primary;
-    const face_2 = darken(0.45, palette.primary);
-    const face_3 = darken(0.3, palette.primary);
-
-    console.log({ face_3 })
+    const face_2 = darken(0.4, palette.primary);
+    const face_3 = darken(0.25, palette.primary);
 
     const colors = useMemo(() => [ stroke, face_1, face_2, face_3 ],[ stroke, face_1, face_2, face_3 ]);
 

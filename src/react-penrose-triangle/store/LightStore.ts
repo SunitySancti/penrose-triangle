@@ -1,96 +1,85 @@
 import { makeAutoObservable } from 'mobx'
 
 import { numberify } from '../util'
+import GeometryStore from './GeometryStore';
 
 import type { NumberLike,
               LightConfig,
-              PenroseTriangleDefaultValues } from '../types'
-import GeometryStore from './GeometryStore';
+              LightInititalValues } from '../types'
 
 
-const initial: LightConfig = Object.freeze({
-    lightElevation: 2,
-    lightRotation: 30,
-    lightBinding: false,
-    lightIntensity: 10,
-    brightness: 1,
-    lightPosition: Object.freeze([1,1,1] as const),
+export const defaultLight: LightConfig = Object.freeze({
+    elevation: 2.5,
+    rotation: 30,
+    binding: false,
+    intensity: 12.5,
+    brightness: 1.25,
 });
 
 class LightStore {
     geometryStore: GeometryStore
     angle: number       // angle in degrees, clockwise
 
-    lightBinding: false | number
-    lightElevation: number
-    lightIntensity: number
+    binding: false | number
+    elevation: number
+    intensity: number
     brightness: number
 
     
-    constructor(geometryStore: GeometryStore, defaultValues?: PenroseTriangleDefaultValues) {
+    constructor(geometryStore: GeometryStore, defaultValues: LightInititalValues = {}) {
         makeAutoObservable(this);
         this.geometryStore = geometryStore;
 
-        const { lightRotation, lightBinding, lightElevation, lightIntensity, brightness } = defaultValues || {};
+        const { rotation, binding, elevation, intensity, brightness } = defaultValues || {};
         
-        this.angle = numberify(lightRotation, initial.lightRotation);
-        this.lightBinding = lightBinding === undefined ? initial.lightBinding
-                             : lightBinding === false     ? false
-                                                             : numberify(lightBinding, 0);
-        this.lightElevation = numberify(lightElevation, initial.lightElevation);
-        this.lightIntensity = numberify(lightIntensity, initial.lightIntensity);
-        this.brightness = numberify(brightness, initial.brightness);
+        this.angle = numberify(rotation, defaultLight.rotation);
+        this.binding = binding === undefined ? defaultLight.binding
+                             : binding === false     ? false
+                                                             : numberify(binding, 0);
+        this.elevation = numberify(elevation, defaultLight.elevation);
+        this.intensity = numberify(intensity, defaultLight.intensity);
+        this.brightness = numberify(brightness, defaultLight.brightness);
     }
 
     // UNDO MARK
 
-    get lightRotation() {
-        return typeof(this.lightBinding) === 'number'
-            ? this.geometryStore.rotation + this.lightBinding
+    get rotation() {
+        return typeof(this.binding) === 'number'
+            ? this.geometryStore.rotation + this.binding
             : this.angle
     }
 
-    get lightPosition() {
-        const radians = Math.PI * (90 - this.lightRotation) / 180;
-
-        return ([
-            Math.cos(radians),
-            Math.sin(radians),
-            this.lightElevation
-        ]) as const
-    }
-
-    setlightIntensity = (value: NumberLike) => {
-        this.lightIntensity = numberify(value, this.lightIntensity)
+    setIntensity = (value: NumberLike) => {
+        this.intensity = numberify(value, this.intensity)
     }
 
     setBrightness = (value: NumberLike) => {
         this.brightness = numberify(value, this.brightness)
     }
 
-    setLightRotation = (value: NumberLike) => {
+    setRotation = (value: NumberLike) => {
         let newValue = numberify(value, this.angle);
         
         while(newValue > 360) newValue -= 360;
         while(newValue < 0) newValue += 360;
 
-        if(typeof this.lightBinding === 'number') {
-            this.lightBinding = Math.round((newValue - this.geometryStore.rotation) * 100) / 100
+        if(typeof this.binding === 'number') {
+            this.binding = Math.round((newValue - this.geometryStore.rotation) * 100) / 100
         }
 
         this.angle = newValue
     }
 
-    setlightElevation = (value: NumberLike) => {
-        this.lightElevation = numberify(value, this.lightElevation)
+    setElevation = (value: NumberLike) => {
+        this.elevation = numberify(value, this.elevation)
     }
 
-    togglelightBinding = () => {
-        if(this.lightBinding === false) {
-            this.lightBinding = Math.round((this.lightRotation - this.geometryStore.rotation) * 100) / 100 
+    toggleBinding = () => {
+        if(this.binding === false) {
+            this.binding = Math.round((this.rotation - this.geometryStore.rotation) * 100) / 100 
         } else {
-            this.angle = this.lightRotation;
-            this.lightBinding = false
+            this.angle = this.rotation;
+            this.binding = false
         }
     }
 }

@@ -1,6 +1,7 @@
 import { useMemo,
          useState,
-         useEffect } from 'react'
+         useEffect, 
+         useCallback} from 'react'
 import { Vector2 } from 'three'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -12,7 +13,8 @@ import { getPointsBetween,
 import type { RefObject } from 'react'
 import type { Group } from 'three'
 import type { Vertices,
-              CubesDataParams } from '../types'
+              CubesDataParams,
+              TriangleRotationParams } from '../types'
 
 
 export const useCubesData = ({
@@ -93,6 +95,55 @@ export const useCubeGeometry = (size: number, shouldSlice = false, isInverted = 
     },[ size, shouldSlice, isInverted ]);
 }
 
+export const useTriangleRotation = ({
+    rotation,
+    rotationSpeed,
+    isRotating,
+    setRotation,
+    lightRotation,
+    binding,
+}: TriangleRotationParams
+) => {
+    const [geometryRotation, setGeometryRotation] = useState(rotation);
+    const isControlledComponent = !!setRotation;
+
+    const updateRotation = useCallback((degrees: number) => {
+        let newValue = Math.round(((isControlledComponent ? rotation : geometryRotation) + degrees) * 100) / 100;
+        while(newValue > 360) newValue -= 360;
+        while(newValue < 0) newValue += 360;
+
+        if(isControlledComponent) {
+            setRotation(newValue)
+        } else {
+            setGeometryRotation(newValue);
+        }
+    },[ setRotation, setGeometryRotation, rotation, geometryRotation ]);
+
+    const useAutoRotation = useCallback(() => {
+        useFrame((_state, delta) => {
+            if(isRotating && rotationSpeed) {
+                updateRotation(rotationSpeed * delta)
+            }
+        });
+    },[ isRotating, rotationSpeed, updateRotation ]);
+
+    const lightPosition = useMemo(() => {
+        const bindedRotation = (!isControlledComponent && typeof binding === 'number')
+            ? Math.round((geometryRotation + binding) * 100) / 100
+            : lightRotation
+
+        const radians = Math.PI * (90 - bindedRotation) / 180;
+
+        return [ Math.cos(radians), Math.sin(radians) ] as const
+    },[ isControlledComponent, binding, geometryRotation, lightRotation ]);
+
+    return [
+        useAutoRotation,
+        isControlledComponent ? rotation : geometryRotation,
+        lightPosition
+    ] as const
+}
+
 export const useCubeRotation = (
     ref: RefObject<Group>,
     isRotating = false,
@@ -151,4 +202,4 @@ export const useElementSizes = (ref?: RefObject<HTMLElement> | undefined) => {
 export const useResponsiveBackground = () => {
     const { width, height } = useElementSizes();
     return width >= height
-} 
+}

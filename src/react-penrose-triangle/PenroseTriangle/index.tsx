@@ -1,86 +1,143 @@
 import { memo } from 'react'
-import { Canvas,
-         useFrame } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { OrthographicCamera } from '@react-three/drei'
+import { observer } from 'mobx-react-lite'
 
 import PenroseTriangleView from './view'
 import { useCubesData,
-         useElementSizes } from '../util/hooks'
+         useElementSizes,
+         useTriangleRotation } from '../util/hooks'
 import { zoomCoefficient } from '../util/magicNumbers'
+import { defaultValues } from '../store'
 
-import { SceneProps,
+import { PenroseTriangleProps,
+         SceneProps,
          PenroseTriangleModelProps,
-        //  PenroseTriangleProps 
-        } from '../types'
+         GeometryConfig,
+         MaterialConfig,
+         LightConfig } from '../types'
 
 
 const PenroseTriangle = memo(({
-    rotate,
-	cubesInSide = 5,
-	gapRatio = 0.2,
-    diameter = 1,
-    rotation = 0,
-    rotationSpeed = 12,
-    isRotating = false,
-    isInverted = false,
+    useAutoRotation,
+	cubesInSide,
+	gapRatio,
+    diameter,
+    rotation,
+    isInverted,
     color,
 }: PenroseTriangleModelProps
 ) => {
     const { cubeCenters, cubeSize } = useCubesData({ cubesInSide, gapRatio, diameter, isInverted });
 
-    useFrame((_state, delta) => {
-        if(isRotating && rotationSpeed) {
-            rotate(rotationSpeed * delta)
-        }
-    });
+    useAutoRotation();
     
-    return (
+    return <>
         <PenroseTriangleView {...{
             cubeCenters,
             cubeSize,
-            rotation,
             diameter,
+            rotation,
             isInverted,
             color
-         }}/>
-    )
+        }}/>
+    </>
 });
 
-const Scene = ({
+const Scene = observer(({
+    geometry,
+    material,
+    light,
     parentRef,
-    lightPosition: [x, y, z] = [5, 5, 5],
-    lightIntensity = 10,
-    brightness = 50,
-    lightBinding,
-    ...config
+    setRotation,
 }: SceneProps
 ) => {
     const { width, height } = useElementSizes(parentRef);
     const zoom = Math.min(width, height) * zoomCoefficient;
 
+    const { rotation,
+            rotationSpeed,
+            isRotating } = geometry;
+    const { elevation,
+            rotation: lightRotation,
+            binding,
+            brightness,
+            intensity } = light
+
+    const [ useAutoRotation,
+            geometryRotation,
+            lightPosition ] = useTriangleRotation({ setRotation, rotation, rotationSpeed, isRotating, lightRotation, binding });
+
     return (
         <Canvas style={{ height: '100%', width: '100%' }}>
 
-            <OrthographicCamera  
-                makeDefault  
-                zoom={ zoom }  
-                position={[0, 0, 100]}  
-            />  
-
+            <OrthographicCamera
+                makeDefault
+                zoom={ zoom }
+                position={[0, 0, 100]}
+            />
             <ambientLight intensity={ brightness } />
             <directionalLight
-                position={[ x, y, z ]}
-                intensity={ lightIntensity }
+                position={[ ...lightPosition, elevation ]}
+                intensity={ intensity }
             />
 
-            <PenroseTriangle {...config }/>
+            <PenroseTriangle {...{
+                ...geometry,
+                ...material,
+                rotation: geometryRotation,
+                useAutoRotation
+            }}/>
             
         </Canvas>
     )
+});
+
+const RenderController = ({
+    geometry = {},
+    material = {},
+    light = {},
+    parentRef,
+    setRotation
+}: PenroseTriangleProps
+) => {
+    const { defaultGeometry, defaultMaterial, defaultLight } = defaultValues;
+
+    function isCompleted(x: object, y: object) {
+        const keysY = Object.keys(y);
+        return keysY.every(key => key in x);
+    }
+
+    const isControlled = typeof setRotation === 'function'
+        && isCompleted(geometry, defaultGeometry)
+        && isCompleted(material, defaultMaterial)
+        && isCompleted(light, defaultLight)
+
+    // The presence of setRotation is considered as a sign of controlled component
+    // It's assumed that this function can be obtained only from usePenroseTriangle hook
+    return isControlled
+        ?   <Scene {...{
+                geometry: geometry as GeometryConfig,
+                material: material as MaterialConfig,
+                light: light as LightConfig,
+                parentRef,
+                setRotation
+            }}/>
+        :   <Scene {...{
+                geometry: {
+                    ...defaultGeometry,
+                    ...geometry,
+                },
+                material: {
+                    ...defaultMaterial,
+                    ...material,
+                },
+                light: {
+                    ...defaultLight,
+                    ...light,
+                },
+                parentRef
+            }}/>
 }
 
-// const MemoLayer = (props: PenroseTriangleProps) => {
-//     return <Scene {...props }/>
-// }
-
-export default Scene
+export default RenderController
