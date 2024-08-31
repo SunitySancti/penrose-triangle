@@ -14,15 +14,15 @@ import type { GeometryControllers,
               MaterialControllers,
               LightControllers,
               PenroseTriangleProps,
-              PenroseTriangleInitialValues } from '../types'
+              InititialConfig } from '../types'
 
 export const defaultValues = {
-    defaultGeometry,
-    defaultMaterial,
-    defaultLight
+    geometry: defaultGeometry,
+    material: defaultMaterial,
+    light: defaultLight
 }
 
-export const usePenroseTriangle = (initialValues: PenroseTriangleInitialValues = {}) => {
+export const usePenroseTriangle = (initialValues: InititialConfig = {}) => {
     const { geometry: initialGeometry,
             material: initialMaterial,
             light: initialLight } = initialValues;

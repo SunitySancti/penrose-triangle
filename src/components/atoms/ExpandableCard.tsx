@@ -5,6 +5,8 @@ import { Box } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
 import styled,
        { useTheme } from 'styled-components'
+import { rgba,
+         darken } from 'polished'
 
 import { useElementSizes } from 'util/hooks'
 
@@ -35,7 +37,7 @@ const StyledIcon = styled(Box)({
 const StyledBackground = styled(Box)(({ theme }) => ({
     position: 'absolute',
     background: 'rgba(255, 255, 255, 0.9)',
-    '&:hover': theme.materials.mateGlass,
+    '&:hover': theme.materials.matteGlass,
 }));
 
 
@@ -56,8 +58,6 @@ const ExpandableCard = memo(({
     const { largeMargin,
             borderRadius,
             buttonSize } = theme.sizes;
-
-    const { resizeTransition } = theme.durations;
     
     const vertPadding = largeMargin;
     const horPadding = useMemo(() => (
@@ -132,9 +132,11 @@ const ExpandableCard = memo(({
                     width: backgroundWidth,
                     height: backgroundHeight,
                     borderRadius,
-                    transition: `all ${ resizeTransition }s ease`,
-                    border: '1px solid rgba(0, 0, 0, 0.3)',
-                    ...isExpanded ? theme.materials.mateGlass : {},
+                    transition: theme.transitions.main,
+                    ...isExpanded ? theme.materials.matteGlass : {
+                        backgroundColor: rgba(theme.palette.primary, 0.4),
+                        border: `1px solid ${darken(0.25, theme.palette.primary)}`,
+                    },
                 }}
             />
 

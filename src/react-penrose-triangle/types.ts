@@ -51,8 +51,6 @@ type Config<Store> = Pick<Store, Properties<Store>>;
 type Actions<Store> = Omit<Store, keyof Config<Store>>
 export type HookReturn = ReturnType<typeof usePenroseTriangle>
 
-export type GroupedConfig = HookReturn['config']
-export type GroupedControllers = HookReturn['controllers']
 export type GeometrySlice = HookReturn['geometry']
 export type MaterialSlice = HookReturn['material']
 export type LightSlice = HookReturn['light']
@@ -60,16 +58,23 @@ export type LightSlice = HookReturn['light']
 export type GeometryConfig = GeometrySlice['config']
 export type MaterialConfig = Config<MaterialStore>
 export type LightConfig = Omit<Config<LightStore>, 'geometryStore' | 'angle'>
+export type DefaultConfig = HookReturn['config']
 
 export type GeometryControllers = Actions<GeometryStore>
 export type MaterialControllers = Actions<MaterialStore>
 export type LightControllers = Actions<LightStore>
+export type DefaultControllers = {
+    geometry: GeometryControllers,
+    material: MaterialControllers,
+    light: LightControllers,
+}
 
 export type GeometryInititalValues = Optional<Config<GeometryStore>>
 export type MaterialInititalValues = Optional<Config<MaterialStore>>
 export type LightInititalValues = Optional<Config<LightStore>>
+export type UnionInitialValues = GeometryInititalValues & MaterialInititalValues & LightInititalValues
 
-export interface PenroseTriangleInitialValues {
+export interface InititialConfig {
     geometry?: GeometryInititalValues,
     material?: MaterialInititalValues,
     light?: LightInititalValues,

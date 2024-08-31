@@ -15,19 +15,28 @@ export default createGlobalStyle`
         overflow: hidden;
     }
 
+    h1 {
+        margin: 2rem;
+    }
+
     ::-webkit-scrollbar {
-        position: absolute;
-        right: 0;
-    }
-    ::-webkit-scrollbar-thumb {
-        position: absolute;
-        background-color: white;
+        width: 12px;
+        height: 12px;
+        background: transparent;
+        margin-right: 2px;
+    };
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    };
+    ::-webkit-scrollbar-thumb {  
+        /* background: rgba(0, 0, 0, 0.25); */
+        background: rgba(255, 255, 255, 0.25);
         border-radius: 10px;
-        transition: all 0.3s ease-in-out;
-        
-        &:hover {
-            background-color: white;
-        }
-    }
+        margin-right: 5px;
+    };
+    ::-webkit-scrollbar-thumb:hover {
+        /* background: rgba(0, 0, 0, 0.5); */
+        background: rgba(255, 255, 255, 0.4);
+    };
 
 `

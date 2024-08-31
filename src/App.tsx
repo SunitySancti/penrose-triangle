@@ -2,8 +2,8 @@ import styled,
        { ThemeProvider } from 'styled-components'
 import { Box } from '@mui/material'
 import { PenroseTriangle,
-         usePenroseTriangle } from 'react-penrose-triangle'
-import { observer } from 'mobx-react-lite'
+         usePenroseTriangle,
+         observer } from 'react-penrose-triangle'
 
 import MenuController from 'components/MenuController'
 import TriangleContainer from 'components/TriangleContainer'
@@ -34,20 +34,21 @@ const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape })
     }
 }));
 
-const defaultConfig = Object.freeze({
-    geometry: {
-        cubesInSide: 4,
-        gapRatio: 0.5,
-        diameter: 1,
-        rotation: 60,
-        rotationSpeed: 30,
-        isRotating: true,
-        isInverted: true,
-    },
-    light: {
-        binding: 0,
-    }
-});
+// const defaultConfig = Object.freeze({
+//     geometry: {
+//         cubesInSide: 4,
+//         gapRatio: 0.5,
+//         diameter: 1,
+//         rotation: 60,
+//         rotationSpeed: 30,
+//         isRotating: true,
+//         isInverted: true,
+//     },
+//     light: {
+//         binding: 0,
+//     }
+// });
+
 
 const App = observer(() => {
     const isLandscape = useResponsiveBackground();
@@ -55,18 +56,14 @@ const App = observer(() => {
             config,
             geometry,
             material,
-            light,
-            parentRef } = usePenroseTriangle(defaultConfig);
+            light } = usePenroseTriangle();
 
     return (
         <ThemeProvider theme={ uiStoreInstance.theme }>
                 <GlobalStyles/>
                 <Background $isLandscape={ isLandscape }>
 
-                    <TriangleContainer {...{
-                        ref: parentRef,
-                        config
-                    }}>
+                    <TriangleContainer {...{ config }}>
                         <PenroseTriangle {...props }/>
                     </TriangleContainer>
 

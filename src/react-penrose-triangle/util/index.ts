@@ -63,4 +63,12 @@ export const numberify = <T extends number | undefined>(value: any, fallback: T)
 
 export const boolify = (value: any, fallback: boolean) => (
     value === undefined ? fallback : !!value
-)
+);
+
+export const roundAndNarrow = (num: number) => {
+    num = Math.round(num * 100) / 100;
+    // num = Number(num.toFixed(2))
+    while(num > 360) num -= 360;
+    while(num < 0) num += 360;
+    return num
+}

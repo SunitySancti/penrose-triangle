@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrthographicCamera } from '@react-three/drei'
 import { observer } from 'mobx-react-lite'
@@ -48,12 +48,13 @@ const Scene = observer(({
     geometry,
     material,
     light,
-    parentRef,
     setRotation,
 }: SceneProps
 ) => {
+    const parentRef = useRef<HTMLDivElement>(null);
     const { width, height } = useElementSizes(parentRef);
     const zoom = Math.min(width, height) * zoomCoefficient;
+
 
     const { rotation,
             rotationSpeed,
@@ -69,7 +70,8 @@ const Scene = observer(({
             lightPosition ] = useTriangleRotation({ setRotation, rotation, rotationSpeed, isRotating, lightRotation, binding });
 
     return (
-        <Canvas style={{ height: '100%', width: '100%' }}>
+        <div style={{ height: '100%', width: '100%' }} ref={ parentRef }>
+        <Canvas style={{ height: '100%', width: '100%' }} >
 
             <OrthographicCamera
                 makeDefault
@@ -90,6 +92,7 @@ const Scene = observer(({
             }}/>
             
         </Canvas>
+        </div>
     )
 });
 
@@ -97,11 +100,12 @@ const RenderController = ({
     geometry = {},
     material = {},
     light = {},
-    parentRef,
     setRotation
 }: PenroseTriangleProps
 ) => {
-    const { defaultGeometry, defaultMaterial, defaultLight } = defaultValues;
+    const { geometry: defaultGeometry,
+            material: defaultMaterial,
+            light: defaultLight } = defaultValues;
 
     function isCompleted(x: object, y: object) {
         const keysY = Object.keys(y);
@@ -120,7 +124,6 @@ const RenderController = ({
                 geometry: geometry as GeometryConfig,
                 material: material as MaterialConfig,
                 light: light as LightConfig,
-                parentRef,
                 setRotation
             }}/>
         :   <Scene {...{
@@ -135,8 +138,7 @@ const RenderController = ({
                 light: {
                     ...defaultLight,
                     ...light,
-                },
-                parentRef
+                }
             }}/>
 }
 

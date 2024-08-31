@@ -1,4 +1,7 @@
 import type { MouseEvent } from 'react'
+import type { DefaultConfig,
+              InititialConfig,
+              UnionInitialValues } from 'react-penrose-triangle/types'
 
 
 export const getDistanceToCenterAndAngleY = (
@@ -32,4 +35,77 @@ export const getDistanceToCenterAndAngleY = (
             ?  Math.min(balancedAngle, maxAngle)
             :  Math.max(balancedAngle, -maxAngle)
     }
+}
+
+function getEntries<T extends {}>(obj: T): [keyof T, T[keyof T]][] {
+    return Object.entries(obj) as [keyof T, T[keyof T]][];
+}
+function getKeys<T extends {}>(obj: T) {
+    return Object.keys(obj) as (keyof T)[];
+}
+function optionalClone<T extends {}>(obj?: T) {
+    return {...obj || {}} as {[K in keyof T]?: T[K]}
+}
+
+export const getDiff = (config: DefaultConfig, defaultConfig: DefaultConfig) => {
+    const { geometry, material, light } = config;
+    const diffGeometry = optionalClone(geometry);
+    const diffMaterial = optionalClone(material);
+    const diffLight = optionalClone(light);
+
+    getKeys(geometry).forEach(key => {
+        if(defaultConfig.geometry[key] === geometry[key]) {
+            delete diffGeometry[key]
+        }
+    });
+    getKeys(material).forEach(key => {
+        if(defaultConfig.material[key] === material[key]) {
+            delete diffMaterial[key]
+        }
+    });
+    getKeys(light).forEach(key => {
+        if(defaultConfig.light[key] === light[key]) {
+            delete diffLight[key]
+        }
+    });
+    
+    if(geometry.isRotating) {
+        delete diffGeometry.rotation
+    } else {
+        delete diffGeometry.rotationSpeed
+    }
+    if(light.binding !== false) {
+        delete diffLight.rotation
+    }
+
+    const diffConfig: InititialConfig = {};
+
+    if(getKeys(diffGeometry).length) {
+        diffConfig.geometry = diffGeometry
+    }
+    if(getKeys(diffMaterial).length) {
+        diffConfig.material = diffMaterial
+    }
+    if(getKeys(diffLight).length) {
+        diffConfig.light = diffLight
+    }
+
+    return diffConfig
+}
+
+const mapProperties = (groupConfig: UnionInitialValues = {}) => getEntries(groupConfig)
+     .map(([key, value]) => {
+        if(typeof value === 'string') {
+            value = `'${ value }'`
+        }
+        return `\n\t\t${ key }: ${ value }`
+});
+
+export const parseConfigToSnippet = (config: InititialConfig = {}) => {
+    const mappedGroups = getEntries(config).map(([ groupName, groupConfig ]) => (
+        `\n\t${ groupName }: {${ mapProperties(groupConfig) }\n\t}`
+    ));
+
+    const mappedGroupsString = mappedGroups.length ? `{   ${ mappedGroups }\n}` : 'undefined || {}';
+    return `const initialConfig = ${ mappedGroupsString }`
 }

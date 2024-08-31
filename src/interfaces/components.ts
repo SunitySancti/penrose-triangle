@@ -3,7 +3,8 @@ import type { ReactNode,
 
 import type { GeometrySlice,
               MaterialSlice,
-              LightSlice } from 'react-penrose-triangle/types'
+              LightSlice,
+              DefaultConfig } from 'react-penrose-triangle/types'
 
 
 interface CircleGeometryProps {
@@ -95,6 +96,22 @@ export interface MenuControllerProps {
     light: LightSlice,
 }
 
-export interface TriangleContainerProps {
-    children: ReactNode
+export interface ConfigProps {
+    config: DefaultConfig,
+}
+
+export interface TriangleContainerProps extends ConfigProps {
+    children: ReactNode,
+    [prop: string]: any
+}
+
+export interface CodeSnippetProps {
+    codeString?: string
+    language?: string
+}
+
+export interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
 }

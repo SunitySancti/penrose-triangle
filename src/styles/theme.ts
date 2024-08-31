@@ -15,19 +15,25 @@ export const baseTheme = {
         primary: '#FFF877',
         textPrimary: 'black',
         bg: 'white',
+        codeSnippetBackground: '#2a2038',
+        codeSnippetButton: '#60596b',
+        codeSnippetButtonHover: '#7d7b87',
         gray_00: 'white',
         gray_10: '#ccc',
         gray_50: '#777',
         gray_70: '#666',
         gray_90: '#333',
         gray_100: 'black',
+        transparent_white_00: 'rgba(255,255,255,0)',
+        transparent_white_25: 'rgba(255,255,255,0.25)',
+        transparent_white_60: 'rgba(255,255,255,0.6)',
         transparent_white_70: 'rgba(255,255,255,0.7)',
         transparent_black_5: 'rgba(0,0,0,0.05)',
         transparent_black_10: 'rgba(0,0,0,0.1)',
         transparent_black_25: 'rgba(0,0,0,0.25)',
     },
     materials: {
-        mateGlass: {
+        matteGlass: {
             boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
             backdropFilter: 'blur(9px)',
             WebkitBackdropFilter: 'blur(9px)',
@@ -42,8 +48,41 @@ export const baseTheme = {
             border: '1px solid rgba(255, 255, 255, 0.6)'
         },
     },
+    mixins: {
+        flexCenter: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        flexColumnStart: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            flexFlow: 'column',
+        },
+        scrollbar: {
+            '&::-webkit-scrollbar': {
+                width: '12px',
+                background: 'transparent',
+            },
+            '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {  
+                background: 'rgba(0, 0, 0, 0.25)',
+                borderRadius: '10px',
+                margin: '5px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+                background: 'rgba(0, 0, 0, 0.5)',
+            },
+        }
+    },
     durations: {
         resizeTransition: 0.6
+    },
+    transitions: {
+        main: `all 0.6s ease`
     }
 }
 

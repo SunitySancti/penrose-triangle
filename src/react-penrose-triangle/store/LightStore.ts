@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
-import { numberify } from '../util'
+import { numberify,
+         roundAndNarrow } from '../util'
 import GeometryStore from './GeometryStore';
 
 import type { NumberLike,
@@ -10,8 +11,8 @@ import type { NumberLike,
 
 export const defaultLight: LightConfig = Object.freeze({
     elevation: 2.5,
-    rotation: 30,
-    binding: false,
+    rotation: 0,
+    binding: 50,
     intensity: 12.5,
     brightness: 1.25,
 });
@@ -26,11 +27,11 @@ class LightStore {
     brightness: number
 
     
-    constructor(geometryStore: GeometryStore, defaultValues: LightInititalValues = {}) {
+    constructor(geometryStore: GeometryStore, initialValues: LightInititalValues = {}) {
         makeAutoObservable(this);
         this.geometryStore = geometryStore;
 
-        const { rotation, binding, elevation, intensity, brightness } = defaultValues || {};
+        const { rotation, binding, elevation, intensity, brightness } = initialValues || {};
         
         this.angle = numberify(rotation, defaultLight.rotation);
         this.binding = binding === undefined ? defaultLight.binding
@@ -45,8 +46,8 @@ class LightStore {
 
     get rotation() {
         return typeof(this.binding) === 'number'
-            ? this.geometryStore.rotation + this.binding
-            : this.angle
+            ? roundAndNarrow(this.geometryStore.rotation + this.binding)
+            : roundAndNarrow(this.angle)
     }
 
     setIntensity = (value: NumberLike) => {
@@ -58,13 +59,10 @@ class LightStore {
     }
 
     setRotation = (value: NumberLike) => {
-        let newValue = numberify(value, this.angle);
-        
-        while(newValue > 360) newValue -= 360;
-        while(newValue < 0) newValue += 360;
+        let newValue = roundAndNarrow(numberify(value, this.angle));
 
         if(typeof this.binding === 'number') {
-            this.binding = Math.round((newValue - this.geometryStore.rotation) * 100) / 100
+            this.binding = roundAndNarrow(newValue - this.geometryStore.rotation)
         }
 
         this.angle = newValue
@@ -76,7 +74,7 @@ class LightStore {
 
     toggleBinding = () => {
         if(this.binding === false) {
-            this.binding = Math.round((this.rotation - this.geometryStore.rotation) * 100) / 100 
+            this.binding = roundAndNarrow(this.rotation - this.geometryStore.rotation);
         } else {
             this.angle = this.rotation;
             this.binding = false

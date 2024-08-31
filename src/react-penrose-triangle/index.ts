@@ -1,11 +1,13 @@
+import { observer } from 'mobx-react-lite'
 import PenroseTriangle from './PenroseTriangle'
 import { usePenroseTriangle } from './store'
-import { observer } from 'mobx-react-lite'
+import { defaultValues } from './store'
 
 export {
+    observer,
     PenroseTriangle,
     usePenroseTriangle,
-    observer,
+    defaultValues
 }
 
 export default PenroseTriangle

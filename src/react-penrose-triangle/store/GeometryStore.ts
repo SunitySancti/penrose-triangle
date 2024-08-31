@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx'
 
 import { numberify,
-         boolify } from '../util'
+         boolify,
+         roundAndNarrow } from '../util'
 
 import type { NumberLike,
               GeometryConfig,
@@ -9,11 +10,11 @@ import type { NumberLike,
 
 
 export const defaultGeometry: GeometryConfig = Object.freeze({
-    cubesInSide: 5,
-    gapRatio: 0.2,
+    cubesInSide: 6,
+    gapRatio: 0.25,
     diameter: 1,
     rotation: 0,
-    rotationSpeed: 12,
+    rotationSpeed: 10,
     isRotating: true,
     isInverted: false,
 });
@@ -53,29 +54,15 @@ class GeometryStore {
     }
 
     setRotation = (value: NumberLike) => {
-        let newValue = numberify(value, this.rotation);
-
-        while(newValue > 360) newValue -= 360;
-        while(newValue < 0) newValue += 360;
-
-        this.rotation = newValue
+        this.rotation = roundAndNarrow(numberify(value, this.rotation))
     }
 
     rotate = (value: NumberLike) => {
-        const num = numberify(value, undefined);
-        if(num) {
-            let newValue = Math.round((this.rotation + num) * 100) / 100
-            
-            while(newValue > 360) newValue -= 360;
-            while(newValue < 0) newValue += 360;
-
-            this.rotation = newValue
-            
-        }
+        this.rotation = roundAndNarrow(this.rotation + numberify(value, 0))
     }
 
     setRotationSpeed = (value: NumberLike) => {
-        this.rotationSpeed = numberify(value, this.rotationSpeed)
+        this.rotationSpeed = Math.round(numberify(value, this.rotationSpeed))
     }
 
     toggleAutoRotation = () => {

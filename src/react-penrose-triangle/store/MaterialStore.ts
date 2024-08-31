@@ -5,15 +5,15 @@ import type { MaterialConfig,
 
 
 export const defaultMaterial: MaterialConfig = Object.freeze({
-    color: '#c081de'
+    color: '#bc2a9c'
 });
 
 class MaterialStore {
     color: string
     
-    constructor(defaultValues: MaterialInititalValues = {}) {
+    constructor(initialValues: MaterialInititalValues = {}) {
         makeAutoObservable(this);
-        const { color } = defaultValues;
+        const { color } = initialValues;
 
         this.color = color || defaultMaterial.color
     }
