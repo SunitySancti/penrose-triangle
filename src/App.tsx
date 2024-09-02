@@ -34,21 +34,6 @@ const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape })
     }
 }));
 
-// const defaultConfig = Object.freeze({
-//     geometry: {
-//         cubesInSide: 4,
-//         gapRatio: 0.5,
-//         diameter: 1,
-//         rotation: 60,
-//         rotationSpeed: 30,
-//         isRotating: true,
-//         isInverted: true,
-//     },
-//     light: {
-//         binding: 0,
-//     }
-// });
-
 
 const App = observer(() => {
     const isLandscape = useResponsiveBackground();

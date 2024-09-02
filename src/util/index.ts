@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react'
 import type { DefaultConfig,
               InititialConfig,
-              UnionInitialValues } from 'react-penrose-triangle/types'
+              UnionInitialValues } from 'react-penrose-triangle/dist/types'
 
 
 export const getDistanceToCenterAndAngleY = (

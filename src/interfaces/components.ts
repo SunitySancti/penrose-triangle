@@ -4,7 +4,7 @@ import type { ReactNode,
 import type { GeometrySlice,
               MaterialSlice,
               LightSlice,
-              DefaultConfig } from 'react-penrose-triangle/types'
+              DefaultConfig } from 'react-penrose-triangle/dist/types'
 
 
 interface CircleGeometryProps {

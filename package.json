@@ -25,6 +25,7 @@
     "polished": "^4.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-penrose-triangle": "^1.0.2",
     "react-syntax-highlighter": "^15.5.0",
     "styled-components": "^6.1.12",
     "three": "^0.167.0",

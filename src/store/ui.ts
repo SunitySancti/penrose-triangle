@@ -2,14 +2,15 @@ import { makeAutoObservable } from 'mobx'
 
 import { ThemeEnum, BaseTheme } from 'interfaces/styled'
 import { darkTheme, lightTheme } from 'styles/theme'
-import { defaultMaterial } from 'react-penrose-triangle/store/MaterialStore'
+import { defaultValues } from 'react-penrose-triangle'
+
 
 class UIStore {
     theme: BaseTheme = lightTheme
     
     constructor() {
         makeAutoObservable(this)
-        this.theme.palette.primary = defaultMaterial.color
+        this.theme.palette.primary = defaultValues.material.color
     }
 
     get isLightTheme() {
