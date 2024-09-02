@@ -1,5 +1,4 @@
-import { forwardRef,
-         useCallback,
+import { useCallback,
          useState,
          useEffect } from 'react'
 import { Box,
@@ -22,7 +21,7 @@ import { getDiff,
 import type { TriangleContainerProps,
               CodeSnippetProps,
               TabPanelProps
- } from 'interfaces/components'
+} from 'interfaces/components'
 
 
 const GlassCard = styled(Box)(({ theme }) => ({
@@ -175,12 +174,10 @@ const CodeSnippet = ({ codeString, language = 'jsx' }: CodeSnippetProps) => {
     : undefined
 )}
 
-const TriangleContainer = forwardRef(({
+const TriangleContainer = ({
     children,
     config,
-}: TriangleContainerProps,
-    ref
-) => {
+}: TriangleContainerProps) => {
     const { materials, sizes, transitions } = useTheme();
     const [ isMatted, setIsMatted ] = useState(false);
 
@@ -212,7 +209,6 @@ const TriangleContainer = forwardRef(({
 
     return (
         <GlassCard {...{
-            ref,
             style: {
                 ...glassStyles,
                 transition: transitions.main
@@ -298,6 +294,6 @@ const TriangleContainer = forwardRef(({
                 
         </GlassCard>
     )
-});
+};
 
 export default TriangleContainer
