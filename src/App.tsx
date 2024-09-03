@@ -13,6 +13,7 @@ import { useResponsiveBackground } from 'util/hooks'
 
 import { uiStoreInstance } from 'store/ui'
 
+import backgroundImageUrl from '/house-of-stairs.jpg'
 
 const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape }) => ({
     width: '100vw',
@@ -26,7 +27,7 @@ const Background = styled<any,{ $isLandscape: boolean }>(Box)(({ $isLandscape })
         position: 'absolute',
         width: $isLandscape ? '100vw' : '100vh',
         height: $isLandscape ? '100vh' : '100vw',
-        backgroundImage: "url('/house-of-stairs.jpg')",
+        backgroundImage: `url('${ backgroundImageUrl }')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -45,16 +46,16 @@ const App = observer(() => {
 
     return (
         <ThemeProvider theme={ uiStoreInstance.theme }>
-                <GlobalStyles/>
-                <Background $isLandscape={ isLandscape }>
+            <GlobalStyles/>
+            <Background $isLandscape={ isLandscape }>
 
-                    <TriangleContainer {...{ config }}>
-                        <PenroseTriangle {...props }/>
-                    </TriangleContainer>
+                <TriangleContainer {...{ config }}>
+                    <PenroseTriangle {...props }/>
+                </TriangleContainer>
 
-                    <MenuController {...{ geometry, material, light }}/>
+                <MenuController {...{ geometry, material, light }}/>
 
-                </Background>
+            </Background>
         </ThemeProvider>
     )
 });
